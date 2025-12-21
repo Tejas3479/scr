@@ -1,0 +1,49 @@
+{
+  "dashboard": {
+    "title": "Eco Farm Platform - System Overview",
+    "panels": [
+      {
+        "title": "API Request Rate",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total[5m])"
+          }
+        ]
+      },
+      {
+        "title": "Error Rate",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{status=~\"5..\"}[5m])"
+          }
+        ]
+      },
+      {
+        "title": "Response Time",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, http_request_duration_seconds_bucket)"
+          }
+        ]
+      },
+      {
+        "title": "Active Users",
+        "targets": [
+          {
+            "expr": "count(active_users)"
+          }
+        ]
+      },
+      {
+        "title": "Database Connections",
+        "targets": [
+          {
+            "expr": "pg_stat_database_numbackends"
+          }
+        ]
+      }
+    ]
+  }
+}
+
+

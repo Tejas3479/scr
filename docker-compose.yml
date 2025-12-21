@@ -1,0 +1,135 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: ecofarm-postgres
+    environment:
+      POSTGRES_DB: ecofarm
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB
+  mongodb:
+    image: mongo:7.0
+    container_name: ecofarm-mongodb
+    environment:
+      MONGO_INITDB_DATABASE: ecofarm
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: ecofarm-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API Gateway
+  api-gateway:
+    build: ./services/api-gateway
+    container_name: ecofarm-api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+      REDIS_URL: redis://redis:6379
+      USER_SERVICE_URL: http://user-service:3001
+      GAMIFICATION_SERVICE_URL: http://gamification-service:3002
+      AI_SERVICE_URL: http://ai-service:3003
+      REALTIME_SERVICE_URL: http://realtime-service:3004
+      CONTENT_SERVICE_URL: http://content-service:3005
+      INTEGRATION_SERVICE_URL: http://integration-service:3006
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # User Service
+  user-service:
+    build: ./services/user-service
+    container_name: ecofarm-user-service
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ecofarm
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Gamification Service
+  gamification-service:
+    build: ./services/gamification-service
+    container_name: ecofarm-gamification-service
+    ports:
+      - "3002:3002"
+    environment:
+      MONGODB_URL: mongodb://mongodb:27017/ecofarm
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # AI Service
+  ai-service:
+    build: ./services/ai-service
+    container_name: ecofarm-ai-service
+    ports:
+      - "3003:3003"
+    environment:
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  redis_data:
+
+networks:
+  default:
+    name: ecofarm-network
+
+
