@@ -1,7 +1,7 @@
 {
-  "name": "ecofarm-web-dashboard",
+  "name": "farmquest-web-dashboard",
   "version": "1.0.0",
-  "description": "Eco Farm Platform Web Dashboard",
+  "description": "FarmQuest - Gamified Farming Platform Web Dashboard",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3007",

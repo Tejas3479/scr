@@ -1,170 +1,136 @@
 'use client'
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { ArrowLeft, Search, Book, MessageCircle, Video, FileText, ChevronDown, ChevronUp } from 'lucide-react'
 
 export default function HelpPage() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null)
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
 
   const faqs = [
     {
-      question: 'How do I create a new farming mission?',
-      answer: 'Click the "New Mission" button in Quick Actions. Choose your mission type, set goals, and start tracking your progress.'
+      id: 1,
+      question: 'How do I start farming on FarmQuest?',
+      answer: 'Create an account, complete the "Plant Your First Crop" mission, and you\'re ready to go! Follow the in-app tutorials to learn the basics of farming and gamification.'
     },
     {
-      question: 'How does the AI pest detection work?',
-      answer: 'Upload a photo of your plant using the "Scan Plant" or "Upload Photo" buttons. Our AI will analyze the image and provide pest/disease detection results with treatment recommendations.'
+      id: 2,
+      question: 'How can I earn more XP?',
+      answer: 'You can earn XP by completing missions, harvesting crops, connecting with experts, and participating in community activities. Check the Missions tab for all available ways to earn rewards.'
     },
     {
-      question: 'Can I get weather forecasts for my farm?',
-      answer: 'Yes! The weather widget on your dashboard shows current conditions and forecasts for your location. You can also get detailed weather insights through the AI chatbot.'
+      id: 3,
+      question: 'What are FarmTokens used for?',
+      answer: 'FarmTokens are the in-game currency used to purchase seeds, tools, and unlock premium features. Earn them by completing missions and achieving farming milestones.'
     },
     {
-      question: 'How do I earn points and achievements?',
-      answer: 'Complete missions, upload plant photos, and engage with the AI assistant to earn points. Check your progress in the leaderboard and achievements sections.'
+      id: 4,
+      question: 'How do I connect with an agricultural expert?',
+      answer: 'Visit the Chat section to connect with verified agricultural experts. They can provide personalized advice about sustainable farming practices, crop selection, and more.'
     },
     {
-      question: 'How can I contact support?',
-      answer: 'Use the "Ask AI" feature for instant help, or reach out through the help section. Our AI assistant can answer most farming-related questions.'
+      id: 5,
+      question: 'Can I play with friends?',
+      answer: 'Yes! Join the community, add friends, and compete on leaderboards. You can also collaborate on shared farming projects and complete community challenges together.'
+    },
+    {
+      id: 6,
+      question: 'Is my data secure?',
+      answer: 'We take data security seriously. All user data is encrypted and stored securely. We follow industry-standard security practices to protect your information.'
     }
   ]
 
-  const helpCategories = [
-    {
-      icon: Book,
-      title: 'Getting Started',
-      description: 'Learn the basics of using Eco Farm',
-      items: ['Creating your first mission', 'Setting up your farm profile', 'Understanding the dashboard']
-    },
-    {
-      icon: MessageCircle,
-      title: 'AI Features',
-      description: 'Master our AI-powered tools',
-      items: ['Pest detection', 'Yield prediction', 'AI chatbot', 'Price forecasting']
-    },
-    {
-      icon: Video,
-      title: 'Video Tutorials',
-      description: 'Watch step-by-step guides',
-      items: ['Mission creation', 'Photo analysis', 'Weather monitoring', 'Achievement system']
-    },
-    {
-      icon: FileText,
-      title: 'Documentation',
-      description: 'Detailed guides and manuals',
-      items: ['API documentation', 'Best practices', 'Troubleshooting', 'Privacy policy']
-    }
+  const resources = [
+    { icon: '📚', title: 'Getting Started Guide', description: 'Learn the basics of FarmQuest' },
+    { icon: '🎥', title: 'Video Tutorials', description: 'Step-by-step farming guides' },
+    { icon: '📖', title: 'Farming Tips', description: 'Best practices for sustainable farming' },
+    { icon: '🌍', title: 'Sustainability', description: 'Environmental impact information' },
   ]
-
-  const filteredFAQs = faqs.filter(faq =>
-    faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
-  )
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-lime-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <button
-                onClick={() => window.history.back()}
-                className="mr-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <h1 className="text-xl font-semibold text-gray-900">Help & Support</h1>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 relative overflow-hidden">
+      {/* Animated background blobs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -left-40 w-80 h-80 bg-emerald-600 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-pulse"></div>
+        <div className="absolute -bottom-40 -right-40 w-80 h-80 bg-green-500 rounded-full mix-blend-screen filter blur-3xl opacity-15 animate-pulse animation-delay-2000"></div>
+      </div>
+
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Header */}
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent mb-2">Help & Support</h1>
+          <p className="text-emerald-300/70">Find answers to common questions and get expert support</p>
+        </div>
+
+        {/* Contact Support */}
+        <div className="bg-gradient-to-br from-emerald-600/30 to-green-600/30 backdrop-blur-xl border border-emerald-500/50 text-emerald-300 rounded-2xl p-8 mb-12 hover:border-emerald-400/70 transition-all shadow-lg shadow-emerald-500/10">
+          <h2 className="text-2xl font-bold text-emerald-400 mb-2">⚡ Need immediate help?</h2>
+          <p className="mb-6 text-emerald-300/80">Our support team is here to assist you 24/7!</p>
+          <div className="flex flex-wrap gap-4">
+            <button className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/20">
+              📧 Email Support
+            </button>
+            <button className="bg-slate-700/50 border border-emerald-500/30 text-emerald-400 hover:border-emerald-400/70 px-6 py-3 rounded-lg font-semibold transition-all hover:bg-slate-700/80">
+              💬 Live Chat
+            </button>
+            <button className="bg-slate-700/50 border border-emerald-500/30 text-emerald-400 hover:border-emerald-400/70 px-6 py-3 rounded-lg font-semibold transition-all hover:bg-slate-700/80">
+              📞 Call Us
+            </button>
           </div>
         </div>
-      </div>
 
-      {/* Search */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search help articles..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-          />
+        {/* Resources */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-emerald-400 mb-6">📚 Learning Resources</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {resources.map((resource, idx) => (
+              <div key={idx} className="bg-slate-800/50 backdrop-blur-xl border border-emerald-500/30 rounded-xl p-6 hover:border-emerald-400/50 hover:shadow-lg hover:shadow-emerald-500/20 transition-all cursor-pointer group">
+                <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{resource.icon}</div>
+                <h3 className="font-bold text-emerald-400 mb-2">{resource.title}</h3>
+                <p className="text-sm text-emerald-300/70">{resource.description}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* FAQ Section */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
-        <div className="space-y-4">
-          {filteredFAQs.map((faq, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="bg-white rounded-lg shadow-sm border"
-            >
-              <button
-                onClick={() => setExpandedFAQ(expandedFAQ === index ? null : index)}
-                className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
-              >
-                <span className="font-medium text-gray-900">{faq.question}</span>
-                {expandedFAQ === index ? (
-                  <ChevronUp className="w-5 h-5 text-gray-500" />
-                ) : (
-                  <ChevronDown className="w-5 h-5 text-gray-500" />
+        {/* FAQ Section */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-emerald-400 mb-6">❓ Frequently Asked Questions</h2>
+          <div className="space-y-4">
+            {faqs.map((faq) => (
+              <div key={faq.id} className="bg-slate-800/50 backdrop-blur-xl border border-emerald-500/30 rounded-xl overflow-hidden hover:border-emerald-400/50 transition-all">
+                <button
+                  onClick={() => setExpandedFaq(expandedFaq === faq.id ? null : faq.id)}
+                  className="w-full px-6 py-4 flex items-center justify-between hover:bg-slate-700/50 transition-colors"
+                >
+                  <h3 className="font-semibold text-emerald-400 text-left">{faq.question}</h3>
+                  <div className={`text-2xl transition-transform duration-300 text-emerald-400 ${expandedFaq === faq.id ? 'rotate-180' : ''}`}>
+                    ▼
+                  </div>
+                </button>
+                {expandedFaq === faq.id && (
+                  <div className="px-6 py-4 bg-slate-700/30 border-t border-emerald-500/30">
+                    <p className="text-emerald-300/80">{faq.answer}</p>
+                  </div>
                 )}
-              </button>
-              {expandedFAQ === index && (
-                <div className="px-6 pb-4">
-                  <p className="text-gray-600">{faq.answer}</p>
-                </div>
-              )}
-            </motion.div>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Help Categories */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Help Categories</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {helpCategories.map((category, index) => {
-            const Icon = category.icon
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-start">
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
-                      <Icon className="w-6 h-6 text-emerald-600" />
-                    </div>
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-semibold text-gray-900">{category.title}</h3>
-                    <p className="text-sm text-gray-600 mt-1">{category.description}</p>
-                    <ul className="mt-3 space-y-1">
-                      {category.items.map((item, itemIndex) => (
-                        <li key={itemIndex} className="text-sm text-gray-500 flex items-center">
-                          <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full mr-2"></div>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </motion.div>
-            )
-          })}
+        {/* Community */}
+        <div className="bg-slate-800/50 backdrop-blur-xl border border-emerald-500/30 rounded-2xl p-8 hover:border-emerald-400/50 transition-all">
+          <h2 className="text-2xl font-bold text-emerald-400 mb-4">👥 Join Our Community</h2>
+          <p className="text-emerald-300/70 mb-6">Connect with other farmers, share tips, and grow together!</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button className="bg-gradient-to-br from-emerald-600/20 to-green-600/20 border border-emerald-500/30 hover:border-emerald-400/50 text-emerald-400 font-semibold py-3 rounded-lg transition-all hover:shadow-lg hover:shadow-emerald-500/20">
+              🌐 Visit Community Forum
+            </button>
+            <button className="bg-gradient-to-br from-emerald-600/20 to-green-600/20 border border-emerald-500/30 hover:border-emerald-400/50 text-emerald-400 font-semibold py-3 rounded-lg transition-all hover:shadow-lg hover:shadow-emerald-500/20">
+              📱 Join Discord Server
+            </button>
+            <button className="bg-gradient-to-br from-emerald-600/20 to-green-600/20 border border-emerald-500/30 hover:border-emerald-400/50 text-emerald-400 font-semibold py-3 rounded-lg transition-all hover:shadow-lg hover:shadow-emerald-500/20">
+              🐦 Follow on Social Media
+            </button>
+          </div>
         </div>
       </div>
     </div>

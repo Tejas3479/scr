@@ -173,11 +173,11 @@ export default function WeatherWidget() {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
-      className="bg-gradient-to-br from-blue-500 via-cyan-500 to-blue-600 rounded-3xl shadow-xl p-6 text-white relative overflow-hidden"
+      className="bg-gradient-to-br from-slate-800/50 via-cyan-700/40 to-blue-800/50 backdrop-blur-xl border border-cyan-500/30 rounded-3xl shadow-xl p-6 text-white relative overflow-hidden hover:border-cyan-400/50 transition-all"
     >
       {/* Decorative circles */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-      <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-400/10 rounded-full -mr-16 -mt-16"></div>
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-400/10 rounded-full -ml-12 -mb-12"></div>
 
       <div className="relative z-10">
         {/* Header with Location and Time */}
@@ -214,30 +214,30 @@ export default function WeatherWidget() {
 
         {/* Weather Details Grid */}
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="flex items-center justify-between bg-white/20 backdrop-blur-sm rounded-xl p-3">
+          <div className="flex items-center justify-between bg-slate-700/30 backdrop-blur-sm rounded-xl p-3 border border-cyan-500/20 hover:border-cyan-400/50 transition-all">
             <div className="flex items-center gap-2">
-              <Droplet className="w-4 h-4" />
+              <Droplet className="w-4 h-4 text-cyan-400" />
               <span className="text-xs">Humidity</span>
             </div>
             <span className="font-semibold text-sm">{weather.humidity}%</span>
           </div>
-          <div className="flex items-center justify-between bg-white/20 backdrop-blur-sm rounded-xl p-3">
+          <div className="flex items-center justify-between bg-slate-700/30 backdrop-blur-sm rounded-xl p-3 border border-cyan-500/20 hover:border-cyan-400/50 transition-all">
             <div className="flex items-center gap-2">
-              <Wind className="w-4 h-4" />
+              <Wind className="w-4 h-4 text-cyan-400" />
               <span className="text-xs">Wind</span>
             </div>
             <span className="font-semibold text-sm">{weather.windSpeed} km/h</span>
           </div>
-          <div className="flex items-center justify-between bg-white/20 backdrop-blur-sm rounded-xl p-3">
+          <div className="flex items-center justify-between bg-slate-700/30 backdrop-blur-sm rounded-xl p-3 border border-cyan-500/20 hover:border-cyan-400/50 transition-all">
             <div className="flex items-center gap-2">
-              <Eye className="w-4 h-4" />
+              <Eye className="w-4 h-4 text-cyan-400" />
               <span className="text-xs">Visibility</span>
             </div>
             <span className="font-semibold text-sm">{weather.visibility} km</span>
           </div>
-          <div className="flex items-center justify-between bg-white/20 backdrop-blur-sm rounded-xl p-3">
+          <div className="flex items-center justify-between bg-slate-700/30 backdrop-blur-sm rounded-xl p-3 border border-cyan-500/20 hover:border-cyan-400/50 transition-all">
             <div className="flex items-center gap-2">
-              <Thermometer className="w-4 h-4" />
+              <Thermometer className="w-4 h-4 text-cyan-400" />
               <span className="text-xs">Pressure</span>
             </div>
             <span className="font-semibold text-sm">{weather.pressure} hPa</span>
@@ -249,7 +249,7 @@ export default function WeatherWidget() {
           <div className="mb-6">
             <motion.button
               onClick={() => setShowAlerts(!showAlerts)}
-              className="w-full flex items-center justify-between bg-red-600/80 hover:bg-red-600/90 backdrop-blur-sm rounded-xl p-3 text-sm font-semibold transition-colors"
+              className="w-full flex items-center justify-between bg-red-600/40 hover:bg-red-600/60 border border-red-500/30 backdrop-blur-sm rounded-xl p-3 text-sm font-semibold transition-all"
               whileTap={{ scale: 0.98 }}
             >
               <div className="flex items-center gap-2">
@@ -272,7 +272,7 @@ export default function WeatherWidget() {
                       key={alert.id}
                       initial={{ x: -20, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
-                      className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
+                      className="bg-slate-700/30 backdrop-blur-sm rounded-xl p-4 border border-red-500/20 hover:border-red-500/40 transition-all"
                     >
                       <div className="flex items-start gap-3">
                         <span className="text-2xl">{getAlertIcon(alert.type)}</span>
@@ -302,7 +302,7 @@ export default function WeatherWidget() {
         <div className="mb-6">
           <motion.button
             onClick={() => setShowSafety(!showSafety)}
-            className="w-full flex items-center justify-between bg-green-600/80 hover:bg-green-600/90 backdrop-blur-sm rounded-xl p-3 text-sm font-semibold transition-colors"
+            className="w-full flex items-center justify-between bg-green-600/40 hover:bg-green-600/60 border border-green-500/30 backdrop-blur-sm rounded-xl p-3 text-sm font-semibold transition-all"
             whileTap={{ scale: 0.98 }}
           >
             <div className="flex items-center gap-2">
@@ -325,7 +325,7 @@ export default function WeatherWidget() {
                     key={tip.id}
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
+                    className="bg-slate-700/30 backdrop-blur-sm rounded-xl p-4 border border-green-500/20 hover:border-green-500/40 transition-all"
                   >
                     <div className="flex items-start gap-3">
                       <Shield className="w-5 h-5 text-green-300 mt-0.5" />
@@ -353,14 +353,14 @@ export default function WeatherWidget() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full py-2 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-semibold hover:bg-white/30 transition-colors"
+            className="w-full py-2 bg-cyan-500/30 border border-cyan-500/30 hover:bg-cyan-500/50 hover:border-cyan-400/50 backdrop-blur-sm rounded-xl text-sm font-semibold transition-all"
           >
             View 7-Day Forecast
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full py-2 bg-white/10 backdrop-blur-sm rounded-xl text-sm font-semibold hover:bg-white/20 transition-colors"
+            className="w-full py-2 bg-slate-700/30 border border-cyan-500/20 hover:bg-slate-700/50 hover:border-cyan-400/40 backdrop-blur-sm rounded-xl text-sm font-semibold transition-all"
           >
             Weather History
           </motion.button>
