@@ -1,7 +1,7 @@
 {
   "name": "api-gateway",
   "version": "1.0.0",
-  "description": "API Gateway for Eco Farm Platform",
+  "description": "API Gateway for FarmQuest Platform",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
@@ -11,6 +11,7 @@
   "dependencies": {
     "express": "^4.18.2",
     "express-rate-limit": "^6.8.1",
+    "express-slow-down": "^1.4.0",
     "helmet": "^7.0.0",
     "cors": "^2.8.5",
     "jsonwebtoken": "^9.0.2",

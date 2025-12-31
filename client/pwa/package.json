@@ -1,7 +1,13 @@
 {
-  "name": "ecofarm-pwa",
+  "name": "eco-farm-pwa",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {}
+}
+{
+  "name": "farmquest-pwa",
   "version": "1.0.0",
-  "description": "Eco Farm Platform Progressive Web App",
+  "description": "FarmQuest - Gamified Farming Platform Progressive Web App",
   "scripts": {
     "dev": "next dev -p 3002",
     "build": "next build",

@@ -1,6 +1,6 @@
 {
   "dashboard": {
-    "title": "Eco Farm Platform - System Overview",
+    "title": "FarmQuest Platform - System Overview",
     "panels": [
       {
         "title": "API Request Rate",

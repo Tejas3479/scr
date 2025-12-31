@@ -1,6 +1,6 @@
 {
-  "name": "Eco Farm Platform",
-  "short_name": "EcoFarm",
+  "name": "FarmQuest Platform",
+  "short_name": "FarmQuest",
   "description": "AI-Powered Gamified Farming Platform",
   "start_url": "/",
   "display": "standalone",
