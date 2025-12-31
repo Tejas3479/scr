@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmQuest - The Gamified Farming Universe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --primary-green: #2ecc71;
+            --dark-green: #27ae60;
+            --light-green: #58d68d;
+            --gold: #f1c40f;
+            --orange: #e67e22;
+            --blue: #3498db;
+            --purple: #9b59b6;
+            --dark-bg: #0a1f1c;
+            --darker-bg: #071714;
+            --card-bg: rgba(23, 42, 38, 0.9);
+            --text-light: #ecf0f1;
+            --text-gray: #bdc3c7;
+            --glow-green: 0 0 20px rgba(46, 204, 113, 0.5);
+            --glow-gold: 0 0 20px rgba(241, 196, 15, 0.5);
+        }
+
+        /* ===== RESET & BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--text-light);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(46, 204, 113, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 80% 70%, rgba(241, 196, 15, 0.1) 0%, transparent 20%);
+            min-height: 100vh;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: var(--glow-green); }
+            50% { box-shadow: 0 0 30px rgba(46, 204, 113, 0.8); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--darker-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--primary-green), var(--gold));
+            border-radius: 10px;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 31, 28, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 2px solid var(--primary-green);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.8rem;
+            background: linear-gradient(to right, var(--primary-green), var(--gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-green);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--primary-green);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, var(--primary-green), var(--light-green));
+            color: var(--darker-bg);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--glow-green);
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(46, 204, 113, 0.6);
+            animation: pulse 0.5s ease;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary-green);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            padding-top: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, var(--primary-green), var(--gold), var(--orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(46, 204, 113, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .typing-text {
+            font-size: 1.8rem;
+            color: var(--primary-green);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            border-right: 3px solid var(--primary-green);
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 3rem;
+        }
+
+        .secondary-button {
+            background: transparent;
+            color: var(--primary-green);
+            border: 2px solid var(--primary-green);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .secondary-button:hover {
+            background: rgba(46, 204, 113, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .hero-visual {
+            position: absolute;
+            right: 5%;
+            width: 40%;
+            max-width: 600px;
+            z-index: 1;
+        }
+
+        .game-world {
+            position: relative;
+            width: 100%;
+            height: 500px;
+        }
+
+        .farmer-avatar {
+            position: absolute;
+            bottom: 20%;
+            left: 10%;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(45deg, var(--primary-green), var(--blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 4s ease-in-out infinite;
+            box-shadow: var(--glow-green);
+        }
+
+        .farm-land {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(to top, #8b4513, #654321);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .crop {
+            position: absolute;
+            bottom: 150px;
+            width: 40px;
+            height: 60px;
+            background: var(--primary-green);
+            border-radius: 20px;
+        }
+
+        .crop:nth-child(1) { left: 20%; animation: float 3s ease-in-out infinite 0.5s; }
+        .crop:nth-child(2) { left: 35%; animation: float 3s ease-in-out infinite 1s; }
+        .crop:nth-child(3) { left: 50%; animation: float 3s ease-in-out infinite 1.5s; }
+        .crop:nth-child(4) { left: 65%; animation: float 3s ease-in-out infinite 2s; }
+        .crop:nth-child(5) { left: 80%; animation: float 3s ease-in-out infinite 2.5s; }
+
+        .quest-marker {
+            position: absolute;
+            top: 20%;
+            right: 20%;
+            width: 80px;
+            height: 80px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+            box-shadow: var(--glow-gold);
+            cursor: pointer;
+        }
+
+        .xp-bar-container {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            background: rgba(0,0,0,0.5);
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid var(--primary-green);
+        }
+
+        .xp-bar {
+            height: 100%;
+            width: 75%;
+            background: linear-gradient(to right, var(--primary-green), var(--light-green));
+            border-radius: 10px;
+            transition: width 2s ease;
+        }
+
+        /* ===== FEATURES SECTION ===== */
+        .section-title {
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(to right, var(--primary-green), var(--blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 5px;
+            background: var(--primary-green);
+            border-radius: 5px;
+        }
+
+        .features {
+            padding: 100px 5%;
+            background: rgba(7, 23, 20, 0.8);
+            position: relative;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-green);
+            box-shadow: var(--glow-green);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary-green), var(--blue));
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(45deg, var(--primary-green), var(--dark-green));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-green);
+        }
+
+        .feature-card p {
+            color: var(--text-gray);
+            line-height: 1.6;
+        }
+
+        .badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--gold);
+            color: var(--darker-bg);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        /* ===== GAMIFICATION SHOWCASE ===== */
+        .gamification-showcase {
+            padding: 100px 5%;
+            position: relative;
+        }
+
+        .game-elements {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .game-element {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            width: 250px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .game-element:hover {
+            transform: scale(1.1);
+            border-color: var(--gold);
+            box-shadow: 0 0 30px rgba(241, 196, 15, 0.3);
+        }
+
+        .element-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--gold);
+        }
+
+        .element-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--text-light);
+        }
+
+        .element-desc {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* ===== INTERACTIVE DEMO ===== */
+        .interactive-demo {
+            padding: 100px 5%;
+            background: rgba(7, 23, 20, 0.8);
+            text-align: center;
+        }
+
+        .demo-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            border: 2px solid var(--primary-green);
+            box-shadow: var(--glow-green);
+        }
+
+        .demo-title {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--primary-green);
+        }
+
+        .demo-quest {
+            background: rgba(46, 204, 113, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+            border-left: 5px solid var(--primary-green);
+        }
+
+        .quest-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .quest-title h4 {
+            color: var(--primary-green);
+            font-size: 1.2rem;
+        }
+
+        .quest-reward {
+            background: var(--gold);
+            color: var(--darker-bg);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+        .quest-progress {
+            margin-top: 15px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 60%;
+            background: linear-gradient(to right, var(--primary-green), var(--light-green));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .demo-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        /* ===== ROLES SECTION ===== */
+        .roles-section {
+            padding: 100px 5%;
+            text-align: center;
+        }
+
+        .roles-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .role-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            width: 280px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        .role-card.farmer {
+            border-color: var(--primary-green);
+        }
+
+        .role-card.expert {
+            border-color: var(--blue);
+        }
+
+        .role-card.official {
+            border-color: var(--purple);
+        }
+
+        .role-card.admin {
+            border-color: var(--orange);
+        }
+
+        .role-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .role-card.farmer .role-icon {
+            background: linear-gradient(45deg, var(--primary-green), var(--dark-green));
+        }
+
+        .role-card.expert .role-icon {
+            background: linear-gradient(45deg, var(--blue), #2980b9);
+        }
+
+        .role-card.official .role-icon {
+            background: linear-gradient(45deg, var(--purple), #8e44ad);
+        }
+
+        .role-card.admin .role-icon {
+            background: linear-gradient(45deg, var(--orange), #d35400);
+        }
+
+        .role-name {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--text-light);
+        }
+
+        .role-desc {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ===== CTA SECTION ===== */
+        .cta-section {
+            padding: 100px 5%;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(241, 196, 15, 0.1));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--gold), var(--orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .cta-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            max-width: 700px;
+            margin: 0 auto 50px;
+            line-height: 1.6;
+        }
+
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--card-bg);
+            border: 2px solid var(--primary-green);
+            padding: 15px 30px;
+            border-radius: 15px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background: var(--primary-green);
+            color: var(--darker-bg);
+            transform: translateY(-5px);
+        }
+
+        .download-icon {
+            font-size: 2rem;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--darker-bg);
+            padding: 50px 5%;
+            border-top: 2px solid var(--primary-green);
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 50px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-column h3 {
+            color: var(--primary-green);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: var(--text-gray);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--primary-green);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: var(--primary-green);
+            color: var(--darker-bg);
+            transform: translateY(-5px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1024px) {
+            .hero-title {
+                font-size: 3.5rem;
+            }
+            
+            .hero-visual {
+                position: relative;
+                right: 0;
+                width: 100%;
+                margin-top: 50px;
+            }
+            
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 150px;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem 5%;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            
+            .typing-text {
+                font-size: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 2.5rem;
+            }
+            
+            .cta-title {
+                font-size: 2.5rem;
+            }
+            
+            .game-world {
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .cta-button, .secondary-button {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .demo-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <span>FarmQuest</span>
+        </div>
+        
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#gamification">Gamification</a>
+            <a href="#demo">Try Demo</a>
+            <a href="#roles">Roles</a>
+            <a href="#download">Download</a>
+        </div>
+        
+        <button class="cta-button">Play Now</button>
+        
+        <button class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Welcome to the Farming Universe</h1>
+            <p class="hero-subtitle">Where sustainable farming meets epic gaming. Transform your farm into a thriving ecosystem while earning rewards, leveling up, and saving the planet.</p>
+            <div class="typing-text">Level Up Your Farm. Save the Planet.</div>
+            
+            <div class="hero-buttons">
+                <button class="cta-button">
+                    <i class="fas fa-play-circle"></i> Start Your Journey
+                </button>
+                <button class="secondary-button">
+                    <i class="fas fa-video"></i> Watch Trailer
+                </button>
+            </div>
+        </div>
+        
+        <div class="hero-visual">
+            <div class="game-world">
+                <div class="xp-bar-container">
+                    <div class="xp-bar" id="xpBar"></div>
+                </div>
+                
+                <div class="farmer-avatar">
+                    <i class="fas fa-user-farmer" style="font-size: 3rem;"></i>
+                </div>
+                
+                <div class="quest-marker" id="questMarker">
+                    <i class="fas fa-flag" style="font-size: 2rem;"></i>
+                </div>
+                
+                <div class="crop"></div>
+                <div class="crop"></div>
+                <div class="crop"></div>
+                <div class="crop"></div>
+                <div class="crop"></div>
+                
+                <div class="farm-land"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FEATURES SECTION ===== -->
+    <section class="features" id="features">
+        <h2 class="section-title">Game-Changing Features</h2>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="badge">NEW</div>
+                <div class="feature-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>AI Farming Assistant</h3>
+                <p>Real-time AI guidance for pest control, crop selection, and sustainable practices. Voice-enabled in 10+ regional languages.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-vr-cardboard"></i>
+                </div>
+                <h3>AR Field Missions</h3>
+                <p>Complete augmented reality missions in your actual farm. Overlay instructions, identify pests, validate sustainable practices.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="badge">HOT</div>
+                <div class="feature-icon">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <h3>Skill Tree & Badges</h3>
+                <p>Unlock skills like "Water Warrior" or "Compost Master". Earn badges and climb leaderboards with your sustainability score.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Farmer Clans</h3>
+                <p>Join clans, compete in seasonal challenges, share knowledge, and win clan rewards. Build your farming community.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-satellite-dish"></i>
+                </div>
+                <h3>Real-time Disaster Alerts</h3>
+                <p>Get early warnings for floods, droughts, pests with AI-powered predictive analytics and rescue mission plans.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <h3>Blockchain Rewards</h3>
+                <p>Earn verifiable sustainability certificates and FarmTokens exchangeable for seeds, tools, and premium market access.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== GAMIFICATION SHOWCASE ===== -->
+    <section class="gamification-showcase" id="gamification">
+        <h2 class="section-title">Immersive Gamification</h2>
+        
+        <div class="game-elements">
+            <div class="game-element">
+                <div class="element-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h3 class="element-title">Daily Quests</h3>
+                <p class="element-desc">Complete daily farming challenges tailored to your crops and season.</p>
+            </div>
+            
+            <div class="game-element">
+                <div class="element-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h3 class="element-title">Achievements</h3>
+                <p class="element-desc">Unlock 100+ achievements from "First Harvest" to "Carbon Negative Farm".</p>
+            </div>
+            
+            <div class="game-element">
+                <div class="element-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="element-title">Leaderboards</h3>
+                <p class="element-desc">Compete locally and globally. Top farmers get featured in Hall of Fame.</p>
+            </div>
+            
+            <div class="game-element">
+                <div class="element-icon">
+                    <i class="fas fa-calendar-star"></i>
+                </div>
+                <h3 class="element-title">Seasonal Events</h3>
+                <p class="element-desc">Limited-time events with exclusive rewards and community challenges.</p>
+            </div>
+            
+            <div class="game-element">
+                <div class="element-icon">
+                    <i class="fas fa-user-ninja"></i>
+                </div>
+                <h3 class="element-title">Avatar Customization</h3>
+                <p class="element-desc">Customize your farmer avatar with outfits, tools, and farm decorations.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== INTERACTIVE DEMO ===== -->
+    <section class="interactive-demo" id="demo">
+        <h2 class="section-title">Try Interactive Demo</h2>
+        
+        <div class="demo-container">
+            <h3 class="demo-title">Complete Your First Mission</h3>
+            
+            <div class="demo-quest">
+                <div class="quest-title">
+                    <h4><i class="fas fa-seedling"></i> Mission: Setup Compost Pit</h4>
+                    <div class="quest-reward">Reward: 500 XP + Compost Master Badge</div>
+                </div>
+                <p>Learn to create organic compost from farm waste. Follow the steps and upload verification.</p>
+                
+                <div class="quest-progress">
+                    <p>Progress: <span id="progressPercent">60%</span></p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="demo-buttons">
+                <button class="cta-button" id="completeMission">
+                    <i class="fas fa-check-circle"></i> Complete Mission
+                </button>
+                <button class="secondary-button" id="askExpert">
+                    <i class="fas fa-user-graduate"></i> Ask Expert
+                </button>
+            </div>
+            
+            <p style="margin-top: 20px; color: var(--text-gray); font-size: 0.9rem;">
+                <i class="fas fa-info-circle"></i> Real app includes AR guidance, AI validation, and peer verification
+            </p>
+        </div>
+    </section>
+
+    <!-- ===== ROLES SECTION ===== -->
+    <section class="roles-section" id="roles">
+        <h2 class="section-title">Choose Your Role</h2>
+        
+        <div class="roles-container">
+            <div class="role-card farmer">
+                <div class="role-icon">
+                    <i class="fas fa-user-farmer"></i>
+                </div>
+                <h3 class="role-name">Eco-Warrior Farmer</h3>
+                <p class="role-desc">Complete missions, earn rewards, level up your farm, join clans, and become a sustainability champion.</p>
+                <button class="secondary-button" style="margin-top: 20px; width: 100%;">Play as Farmer</button>
+            </div>
+            
+            <div class="role-card expert">
+                <div class="role-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h3 class="role-name">Wise Sage Expert</h3>
+                <p class="role-desc">Guide farmers, validate missions, host live sessions, earn consulting fees, and build your reputation.</p>
+                <button class="secondary-button" style="margin-top: 20px; width: 100%;">Join as Expert</button>
+            </div>
+            
+            <div class="role-card official">
+                <div class="role-icon">
+                    <i class="fas fa-landmark"></i>
+                </div>
+                <h3 class="role-name">Kingdom Ruler Official</h3>
+                <p class="role-desc">Monitor regional adoption, launch schemes, track impact, and connect directly with farming communities.</p>
+                <button class="secondary-button" style="margin-top: 20px; width: 100%;">Government Portal</button>
+            </div>
+            
+            <div class="role-card admin">
+                <div class="role-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <h3 class="role-name">Game Master Admin</h3>
+                <p class="role-desc">Manage the universe, create global events, monitor system health, and balance the gaming economy.</p>
+                <button class="secondary-button" style="margin-top: 20px; width: 100%;">Admin Dashboard</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CTA SECTION ===== -->
+    <section class="cta-section" id="download">
+        <h2 class="cta-title">Ready to Transform Farming?</h2>
+        <p class="cta-subtitle">Join 50,000+ farmers already playing FarmQuest. Download now and start your epic journey towards sustainable farming.</p>
+        
+        <div class="download-buttons">
+            <a href="#" class="download-btn">
+                <i class="fab fa-google-play download-icon"></i>
+                <div>
+                    <div style="font-size: 0.8rem;">GET IT ON</div>
+                    <div style="font-size: 1.2rem; font-weight: 700;">Google Play</div>
+                </div>
+            </a>
+            
+            <a href="#" class="download-btn">
+                <i class="fab fa-apple download-icon"></i>
+                <div>
+                    <div style="font-size: 0.8rem;">Download on the</div>
+                    <div style="font-size: 1.2rem; font-weight: 700;">App Store</div>
+                </div>
+            </a>
+            
+            <a href="#" class="download-btn">
+                <i class="fas fa-globe download-icon"></i>
+                <div>
+                    <div style="font-size: 0.8rem;">PLAY ON</div>
+                    <div style="font-size: 1.2rem; font-weight: 700;">Web Browser</div>
+                </div>
+            </a>
+        </div>
+        
+        <p style="margin-top: 50px; color: var(--text-gray);">
+            <i class="fas fa-mobile-alt"></i> Works offline • <i class="fas fa-language"></i> 12+ languages • <i class="fas fa-shield-alt"></i> Free forever
+        </p>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>FarmQuest Universe</h3>
+                <p style="color: var(--text-gray); margin-bottom: 20px;">The world's first gamified sustainable farming platform. Turning farmers into eco-heroes.</p>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Game Modes</h3>
+                <ul>
+                    <li><a href="#">Story Campaign</a></li>
+                    <li><a href="#">Competitive Mode</a></li>
+                    <li><a href="#">Co-op Missions</a></li>
+                    <li><a href="#">Seasonal Events</a></li>
+                    <li><a href="#">Clan Wars</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Real-World Impact</h3>
+                <ul>
+                    <li><a href="#">Sustainability Certificates</a></li>
+                    <li><a href="#">Government Schemes</a></li>
+                    <li><a href="#">Market Access</a></li>
+                    <li><a href="#">Carbon Credits</a></li>
+                    <li><a href="#">Farmer Success Stories</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-envelope"></i> hello@farmquest.game</a></li>
+                    <li><a href="#"><i class="fas fa-phone"></i> +91 1800-XXX-XXXX</a></li>
+                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> Bangalore, India</a></li>
+                    <li><a href="#"><i class="fas fa-file-contract"></i> Partnership Inquiries</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>© 2024 FarmQuest Universe. All rights reserved. | Made with <i class="fas fa-heart" style="color: #e74c3c;"></i> for farmers worldwide</p>
+            <p style="margin-top: 10px; font-size: 0.8rem;">This is a demo concept for Smart India Hackathon 2024 (Problem ID: 25075)</p>
+        </div>
+    </footer>
+
+    <script>
+        // ===== INTERACTIVE ELEMENTS =====
+        
+        // XP Bar Animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const xpBar = document.getElementById('xpBar');
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 75) {
+                    clearInterval(interval);
+                } else {
+                    width++;
+                    xpBar.style.width = width + '%';
+                }
+            }, 30);
+            
+            // Quest Marker Click
+            document.getElementById('questMarker').addEventListener('click', function() {
+                this.style.animation = 'pulse 0.5s ease 3';
+                setTimeout(() => {
+                    this.style.animation = 'pulse 2s infinite';
+                }, 1500);
+                
+                alert('🎯 New Quest Available!\n\n"Water Conservation Champion"\nSave 1000L of water this week\nReward: 750 XP + Water Warrior Badge');
+            });
+            
+            // Complete Mission Button
+            document.getElementById('completeMission').addEventListener('click', function() {
+                const progressFill = document.getElementById('progressFill');
+                const progressPercent = document.getElementById('progressPercent');
+                
+                if (progressFill.style.width === '100%') {
+                    alert('✅ Mission already completed! Check your new badge in profile.');
+                    return;
+                }
+                
+                progressFill.style.width = '100%';
+                progressPercent.textContent = '100%';
+                
+                // Change button
+                this.innerHTML = '<i class="fas fa-trophy"></i> Mission Completed!';
+                this.style.background = 'linear-gradient(45deg, var(--gold), var(--orange))';
+                this.style.boxShadow = '0 0 20px rgba(241, 196, 15, 0.5)';
+                
+                // Show celebration
+                setTimeout(() => {
+                    alert('🏆 CONGRATULATIONS!\n\nYou earned:\n• 500 XP\n• Compost Master Badge\n• 50 FarmTokens\n\nYour sustainability score increased by 15 points!');
+                }, 500);
+            });
+            
+            // Ask Expert Button
+            document.getElementById('askExpert').addEventListener('click', function() {
+                alert('👨‍🌾 Connecting you with available experts...\n\nExpert "Green Thumb Guru" is online!\nStarting video call in 3...2...1...');
+            });
+            
+            // Mobile Menu Toggle
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navLinks = document.querySelector('.nav-links');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                if (navLinks.style.display === 'flex') {
+                    navLinks.style.display = 'none';
+                } else {
+                    navLinks.style.display = 'flex';
+                    navLinks.style.flexDirection = 'column';
+                    navLinks.style.position = 'absolute';
+                    navLinks.style.top = '100%';
+                    navLinks.style.left = '0';
+                    navLinks.style.width = '100%';
+                    navLinks.style.background = 'var(--dark-bg)';
+                    navLinks.style.padding = '20px';
+                    navLinks.style.gap = '15px';
+                }
+            });
+            
+            // Smooth Scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    if (this.getAttribute('href') === '#') return;
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Close mobile menu if open
+                        if (window.innerWidth <= 768) {
+                            navLinks.style.display = 'none';
+                        }
+                    }
+                });
+            });
+            
+            // CTA Button Animation
+            const ctaButtons = document.querySelectorAll('.cta-button');
+            ctaButtons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // Feature Card Hover Effects
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // Parallax Effect on Scroll
+            window.addEventListener('scroll', function() {
+                const scrolled = window.pageYOffset;
+                const heroVisual = document.querySelector('.hero-visual');
+                
+                if (heroVisual && window.innerWidth > 1024) {
+                    heroVisual.style.transform = `translateY(${scrolled * 0.1}px)`;
+                }
+            });
+            
+            // Typing Text Effect
+            const typingText = document.querySelector('.typing-text');
+            const texts = [
+                "Level Up Your Farm. Save the Planet.",
+                "Earn Rewards While Farming.",
+                "Join the Sustainable Farming Revolution.",
+                "Become an Eco-Warrior Hero."
+            ];
+            let textIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+            
+            function typeEffect() {
+                const currentText = texts[textIndex];
+                
+                if (isDeleting) {
+                    typingText.textContent = currentText.substring(0, charIndex - 1);
+                    charIndex--;
+                } else {
+                    typingText.textContent = currentText.substring(0, charIndex + 1);
+                    charIndex++;
+                }
+                
+                if (!isDeleting && charIndex === currentText.length) {
+                    isDeleting = true;
+                    setTimeout(typeEffect, 2000);
+                } else if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    textIndex = (textIndex + 1) % texts.length;
+                    setTimeout(typeEffect, 500);
+                } else {
+                    setTimeout(typeEffect, isDeleting ? 50 : 100);
+                }
+            }
+            
+            // Start typing effect after page loads
+            setTimeout(typeEffect, 1000);
+            
+            // Add floating particles for extra effect
+            createFloatingParticles();
+        });
+        
+        function createFloatingParticles() {
+            const colors = ['#2ecc71', '#f1c40f', '#3498db', '#9b59b6'];
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'fixed';
+                particle.style.width = Math.random() * 10 + 5 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.borderRadius = '50%';
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                particle.style.zIndex = '-1';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.top = Math.random() * 100 + 'vh';
+                
+                document.body.appendChild(particle);
+                
+                // Animate particle
+                animateParticle(particle);
+            }
+        }
+        
+        function animateParticle(element) {
+            let x = Math.random() * 100;
+            let y = Math.random() * 100;
+            let xDirection = Math.random() > 0.5 ? 1 : -1;
+            let yDirection = Math.random() > 0.5 ? 1 : -1;
+            
+            function move() {
+                x += 0.05 * xDirection;
+                y += 0.05 * yDirection;
+                
+                if (x >= 100 || x <= 0) xDirection *= -1;
+                if (y >= 100 || y <= 0) yDirection *= -1;
+                
+                element.style.left = x + 'vw';
+                element.style.top = y + 'vh';
+                
+                requestAnimationFrame(move);
+            }
+            
+            move();
+        }
+    </script>
+</body>
+</html>

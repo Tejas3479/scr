@@ -1,0 +1,56 @@
+_format_version: "2.1"
+_transform: true
+
+services:
+  - name: user-service
+    url: http://user-service:3001
+    routes:
+      - name: users-route
+        paths:
+          - /api/v1/users
+        methods: [GET, POST, PUT, DELETE, PATCH]
+    plugins:
+      - name: jwt
+      - name: rate-limiting
+        config:
+          minute: 100
+          policy: local
+      - name: request-transformer
+        config:
+          remove:
+            headers:
+              - X-Internal
+          add:
+            headers:
+              - X-Gateway: eco-farm
+
+  - name: ai-service
+    url: http://ai-service:3003
+    routes:
+      - name: ai-route
+        paths:
+          - /api/v1/ai
+        methods: [GET, POST]
+    plugins:
+      - name: jwt
+      - name: rate-limiting
+        config:
+          minute: 60
+          policy: local
+
+consumers:
+  - username: demo-user
+    custom_id: demo-1
+    jwt_credentials:
+      - key: demo-key
+        secret: demo-secret
+        algorithm: HS256
+
+plugins:
+  - name: jwt
+    config: {}
+  - name: rate-limiting
+    config:
+      minute: 200
+      policy: local
+

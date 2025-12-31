@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus-config.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"

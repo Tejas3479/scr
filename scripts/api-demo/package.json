@@ -1,0 +1,12 @@
+{
+  "name": "api-demo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node api-demo.js"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

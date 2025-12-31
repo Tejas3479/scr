@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+  gateway1:
+    build:
+      context: ../../services/api-gateway
+      dockerfile: Dockerfile
+    container_name: gateway1
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - JWT_SECRET=${JWT_SECRET:-}
+    networks:
+      - gateway-net
+
+  gateway2:
+    build:
+      context: ../../services/api-gateway
+      dockerfile: Dockerfile
+    container_name: gateway2
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - JWT_SECRET=${JWT_SECRET:-}
+    networks:
+      - gateway-net
+
+  haproxy:
+    image: haproxy:2.8
+    container_name: haproxy
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    ports:
+      - "8080:8080"
+    networks:
+      - gateway-net
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: gateway-nginx
+    depends_on:
+      - haproxy
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    networks:
+      - gateway-net
+
+networks:
+  gateway-net:
+    driver: bridge

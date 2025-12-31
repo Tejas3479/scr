@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  api-gateway:
+    build:
+      context: ../../services/api-gateway
+      dockerfile: Dockerfile
+    container_name: eco_api_gateway
+    environment:
+      - PORT=3000
+      - NODE_ENV=development
+      - JWT_SECRET=${JWT_SECRET:-}
+      - ENFORCE_JWT=${ENFORCE_JWT:-false}
+      - IP_BLACKLIST=${IP_BLACKLIST:-}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user-service
+      - ai-service
+    networks:
+      - eco-net
+
+  user-service:
+    build:
+      context: ../../services/user-service
+      dockerfile: Dockerfile
+    container_name: eco_user_service
+    environment:
+      - PORT=3001
+      - DB_HOST=postgres
+      - DB_PORT=5432
+    ports:
+      - "3001:3001"
+    networks:
+      - eco-net
+
+  ai-service:
+    build:
+      context: ../../services/ai-service
+      dockerfile: Dockerfile
+    container_name: eco_ai_service
+    environment:
+      - PORT=3003
+    ports:
+      - "3003:3003"
+    networks:
+      - eco-net
+
+networks:
+  eco-net:
+    driver: bridge
