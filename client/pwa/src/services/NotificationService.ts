@@ -216,7 +216,7 @@ export class NotificationService {
    * Get application server key for push notifications
    * NOTE: Replace with your actual VAPID public key
    */
-  private getApplicationServerKey(): Uint8Array {
+  private getApplicationServerKey(): BufferSource {
     // This is a placeholder - replace with actual VAPID public key
     const base64 = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || 
       'BEl62iUm-Z2-tdyFTyp8GiDlw1SJg8ohBnH28PoGKeRS_LQ9yUhWiNqFTV-hWAqPmFQbV-_mXlPYeomLSnotUU'
