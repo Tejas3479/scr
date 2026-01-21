@@ -9,17 +9,17 @@ export default function Home() {
   useEffect(() => {
     const token = localStorage.getItem('ef_token')
     if (token) {
-      router.push('/dashboard')
+      router.replace('/dashboard')
     } else {
-      router.push('/auth/login')
+      router.replace('/auth/login')
     }
   }, [router])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyber-dark via-cyber-darker to-cyber-dark">
       <div className="text-center">
-        <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-emerald-300 text-lg">Redirecting to FarmQuest...</p>
+        <div className="w-16 h-16 border-4 border-neon-green border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-neon-green text-lg animate-pulse">Initializing FarmQuest Nexus...</p>
       </div>
     </div>
   )
