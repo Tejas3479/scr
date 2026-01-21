@@ -1,0 +1,7 @@
+{
+  "/landing/page": "app/landing/page.js",
+  "/missions/page": "app/missions/page.js",
+  "/learning/page": "app/learning/page.js",
+  "/help/page": "app/help/page.js",
+  "/chat/page": "app/chat/page.js"
+}

@@ -1,12 +1,22 @@
 import './globals.css'
-import { Inter } from 'next/font/google'
+import { Inter, JetBrains_Mono } from 'next/font/google'
 import HeaderWrapper from '@/components/HeaderWrapper'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap'
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap'
+})
 
 export const metadata = {
-  title: 'FarmQuest - Gamified Farming Platform',
-  description: 'AI-Powered Gamified Farming Platform',
+  title: 'FarmQuest Nexus - Cyber-Agri Gaming Platform',
+  description: 'High-fidelity gaming aesthetic for AI-Powered Gamified Sustainable Farming',
 }
 
 export default function RootLayout({
@@ -15,10 +25,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+      <body className={`${inter.className} bg-gradient-to-br from-cyber-dark via-cyber-darker to-cyber-dark text-gray-100`}>
         <HeaderWrapper />
-        <main>{children}</main>
+        <main className="min-h-screen">{children}</main>
       </body>
     </html>
   )

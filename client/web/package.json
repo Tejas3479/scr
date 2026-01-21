@@ -1,7 +1,7 @@
 {
   "name": "farmquest-web-dashboard",
-  "version": "1.0.0",
-  "description": "FarmQuest - Gamified Farming Platform Web Dashboard",
+  "version": "2.0.0",
+  "description": "FarmQuest Nexus - Cyber-Agri Gaming Platform Web Dashboard",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3007",
@@ -28,12 +28,18 @@
     "zustand": "^4.4.7",
     "react-hook-form": "^7.49.2",
     "zod": "^3.22.4",
-    "lucide-react": "^0.294.0"
+    "lucide-react": "^0.294.0",
+    "three": "^r128",
+    "gsap": "^3.12.2",
+    "@react-three/fiber": "^8.14.0",
+    "@react-three/postprocessing": "^2.8.0",
+    "postprocessing": "^6.28.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.5",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
+    "@types/three": "^r128",
     "typescript": "^5.3.3",
     "eslint": "^8.56.0",
     "eslint-config-next": "14.0.4"

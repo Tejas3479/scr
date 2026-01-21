@@ -67,3 +67,5 @@ Write-Host "📋 View logs: docker-compose logs -f" -ForegroundColor Gray
 Write-Host "🛑 Stop services: docker-compose down" -ForegroundColor Gray
 
 
+
+
