@@ -69,66 +69,45 @@ async def health():
         "diagnostic_active": True
     }
 
-def perform_sequence_alignment(seq1: str, seq2: str) -> float:
-    """
-    Computes a simplified global sequence alignment score (Needleman-Wunsch inspired)
-    Returns a match percentage score from 0.0 to 1.0
-    """
-    m = len(seq1)
-    n = len(seq2)
-    if m == 0 or n == 0:
-        return 0.0
-        
-    # Calculate Levenshtein distance as alignment base
-    dp = [[0] * (n + 1) for _ in range(m + 1)]
-    for i in range(m + 1):
-        dp[i][0] = i
-    for j in range(n + 1):
-        dp[0][j] = j
-        
-    for i in range(1, m + 1):
-        for j in range(1, n + 1):
-            if seq1[i-1] == seq2[j-1]:
-                dp[i][j] = dp[i-1][j-1]
-            else:
-                dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])
-                
-    distance = dp[m][n]
-    max_len = max(m, n)
-    return 1.0 - (distance / max_len)
+from .services.aligner import SequenceAligner
+
+aligner = SequenceAligner()
 
 @app.post("/align", response_model=AlignmentResult)
 @app.post("/api/bioinformatics/align-pcr", response_model=AlignmentResult)
 async def align_pcr_probe(request: PCRProbeAlignRequest):
     """
-    Aligns raw field DNA probe reads against pathogen signatures and
-    factors in Cas12/Cas13 fluorescent cleavage activity.
+    Aligns raw field DNA probe reads against pathogen signatures using
+    dynamic programming Needleman-Wunsch alignments and factors in Cas12/Cas13 activity.
     """
     try:
         best_match = None
         best_score = 0.0
         target_pathogen = None
+        visual_align = ""
         
         # Align sequence against reference pathogen marker tracks
         for key, pathogen in PATHOGEN_DATABASE.items():
-            score = perform_sequence_alignment(request.sequence_read.upper(), pathogen["marker"])
+            result = aligner.align(request.sequence_read.upper(), pathogen["marker"])
+            score = result["match_percentage"] / 100
+            
             if score > best_score:
                 best_score = score
                 best_match = pathogen
                 target_pathogen = key
+                visual_align = result["visual_alignment"]
 
         # Dynamic Cas12/Cas13 collateral cleavage activation assessment
-        # A high fluorescence intensity confirms enzymatic collateral reporting
         cas_active = request.fluorescence_intensity > 0.65
         
-        # Threshold: if alignment is > 80% and Cas sensors are triggered
+        # Threshold: if alignment is > 75% and Cas sensors are triggered
         if best_score > 0.75 and cas_active:
             return AlignmentResult(
                 pathogen_detected=best_match["name"],
                 scientific_name=best_match["name"],
                 alignment_score=round(best_score * 100, 2),
                 severity_level=best_match["severity"],
-                recommended_treatment=best_match["treatment"],
+                recommended_treatment=f"{best_match['treatment']} [Trace: {visual_align}]",
                 cas_collateral_cleavage_active=True
             )
             
@@ -137,7 +116,7 @@ async def align_pcr_probe(request: PCRProbeAlignRequest):
             scientific_name=None,
             alignment_score=round(best_score * 100, 2),
             severity_level="healthy",
-            recommended_treatment="No active pathogen matches. Crop health registers optimal.",
+            recommended_treatment=f"No active pathogen matches. Crop health registers optimal. [Trace: {visual_align}]",
             cas_collateral_cleavage_active=cas_active
         )
     except Exception as e:
