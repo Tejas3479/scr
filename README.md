@@ -10,17 +10,20 @@ Our codebase is organized as a Turborepo-managed `pnpm` workspace structure:
 
 ```
 eco-farm-monorepo/
+├── .github/             # GitHub Actions workflows (Relocated to root for automated CI/CD execution)
 ├── apps/
-│   ├── api/             # NestJS API Gateway (Passkeys, Solana credits, TEE)
+│   ├── api/             # NestJS API Gateway (Graceful SIGTERM, Redlock Quorum, Envelope Encryption)
 │   ├── mcp-server/      # Express WebMCP Server (search_knowledge, mint_carbon_credit)
-│   ├── web/             # farmquest-web-dashboard (Next.js 14 App Router client)
-│   └── agents/          # LangGraph Multi-Agent Engine (FastAPI agent query routing)
+│   ├── web/             # farmquest-web-dashboard (Solarpunk particles, synth, CLI Next.js client)
+│   ├── agents/          # LangGraph Multi-Agent Engine (FastAPI agent query routing)
+│   ├── bioinformatics/  # CRISPR DNA sequence alignment pipeline (FastAPI)
+│   └── mobile/          # React Native mobile client (Successfully scoped in workspace renames)
 ├── packages/
 │   └── db/              # Shared database module (Prisma client & migrations)
-├── services/
-│   └── bioinformatics-service/ # FastAPI CRISPR DNA sequence alignment pipeline
+├── docs/
+│   └── architecture/    # Consolidated system specs and architecture diagrams
 ├── database/
-│   └── local_pg_data/   # User-space PostgreSQL 18 database cluster
+│   └── local_pg_data/   # User-space PostgreSQL database cluster
 ├── package.json         # Root package manager & Turborepo configurations
 ├── turbo.json           # Turborepo build caching & dependency pipeline
 └── .env                 # Monorepo environment configurations
@@ -91,7 +94,7 @@ pnpm --filter @eco-farm/mcp-server run dev
 pnpm --filter farmquest-web-dashboard run dev
 
 # Start CRISPR Bioinformatics (Port 3008)
-python services/bioinformatics-service/src/main.py
+python apps/bioinformatics/src/main.py
 
 # Start LangGraph Agent (Port 8000)
 python -m uvicorn apps.agents.src.main:app --host 0.0.0.0 --port 8000
@@ -104,3 +107,4 @@ python -m uvicorn apps.agents.src.main:app --host 0.0.0.0 --port 8000
 1. **Zero-Trust Passkeys:** WebAuthn endpoints verify hardware biometric keys and persist metadata in the PostgreSQL store.
 2. **TEE Enclave Proofs:** Gateway maps hardware attestation claims (Intel TDX / AWS Nitro) with development fallbacks.
 3. **Solana Blockchain Minting:** Carbon credit tokens are signed and simulated locally when RPC endpoints are offline.
+4. **Fault-Tolerant Session Ring:** Authenticates split-token hashes dynamically using the 5-node parallel Redis Master Quorum Ring.
