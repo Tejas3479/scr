@@ -1,42 +1,26 @@
-# Eco Farm Platform - Web Dashboard
+# 🌌 FarmQuest Web Dashboard (Next.js HUD) — Eco Farm v4.0
 
-Admin and partner dashboard for the Eco Farm Platform.
+This package contains the Next.js visual dashboard HUD client for **Eco Farm v4.0 (Solarpunk Cognitive Agriculture OS)**.
 
-## Setup
+---
 
-```bash
-npm install
-```
+## ⚡ Core Solarpunk Features
 
-## Development
+- **BCI Visual Adaptations:** Tracks real-time attention scores and automatically thins UI component density during high-stress states.
+- **CRISPR Diagnostics Panel:** Visualizes dynamic Needleman-Wunsch DNA alignments and Cas12/Cas13 PCR cleavage intensities.
+- **Quantum rotation grids:** Maps optimized crop rotation grids calculated using remote Qiskit solvers.
+- **LoRaWAN IoT Telemetry:** Visualizes real-time soil moisture and leaf electrophysiology indices inside TimescaleDB graphs.
 
-```bash
-npm run dev
-```
+---
 
-Open [http://localhost:3001](http://localhost:3001) in your browser.
+## 🛠️ Onboarding & Running
 
-## Features
-
-- User management
-- Mission overview and analytics
-- Real-time statistics
-- Data visualization with charts
-- Responsive design
-
-## Environment Variables
-
-Create a `.env.local` file:
-
-```
-NEXT_PUBLIC_API_URL=http://localhost:3000
-```
-
-## Build
-
-```bash
-npm run build
-npm start
-```
-
-
+1. **Install NPM Dependencies:**
+   ```bash
+   pnpm install
+   ```
+2. **Start Development Server:**
+   ```bash
+   pnpm --filter farmquest-web-dashboard run dev
+   ```
+   Open [http://localhost:3007](http://localhost:3007) in your browser.

@@ -1,27 +1,19 @@
-# Pest Detection Model
+# 🔬 Pathogen & Pest Detection Engine — Eco Farm v4.0
 
-## Overview
-Computer vision model for detecting pests and diseases in crop images.
+The pathogen and pest detection engine integrates computer vision models with real-time biological and spiking neural systems.
 
-## Model Architecture
-- Base Model: EfficientNet-B4
-- Training Framework: TensorFlow/Keras
-- Input: 224x224x3 RGB images
-- Output: Multi-class classification (pest types, disease types, healthy)
+---
 
-## Training Data
-- Dataset: Agricultural pest and disease images
-- Augmentation: Rotation, flipping, color jitter
-- Train/Val/Test Split: 70/15/15
+## ⚡ Multi-Stage Diagnostic Pipeline
 
-## Deployment
-- Server-side: TensorFlow Serving
-- Edge/Mobile: TensorFlow Lite
-- Inference API: `/api/v1/ai/image/analyze`
+1. **Computer Vision Layer:**
+   - **Base Model:** YOLOv8 and EfficientNet-B4 for visual foliar pest and leaf disease detection.
+   - **Inference Endpoint:** `/api/v1/ai/image/analyze`
 
-## Performance
-- Accuracy: ~92%
-- Inference Time: < 1 second
-- Model Size: ~45MB (full), ~12MB (lite)
+2. **Neuromorphic Edge Layer (LIF-SNN):**
+   - **Framework:** PyTorch Leaky Integrate-and-Fire (LIF) spiking neural network (`apps/agents/src/snn_engine.py`).
+   - **Edge Telemetry:** Processes LoRaWAN electrophysiological signals at the edge. If the backhaul is down, alerts are buffered locally and flushed upon reconnection.
 
-
+3. **CRISPR Sequence Alignment Layer:**
+   - **Framework:** Needleman-Wunsch global DNA sequence aligner (`apps/bioinformatics/src/services/aligner.py`).
+   - **Pathogen Matches:** Aligns PCR sequence reads against high-risk genomic tracks (e.g., Rice Blast Fungus, Tomato Bacterial Canker, Aphid-borne Viral Vector) to trigger automated biological spray applications.

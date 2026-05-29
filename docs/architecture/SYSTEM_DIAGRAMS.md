@@ -1,220 +1,81 @@
-# System Architecture Diagrams
+# 📊 System Architecture Diagrams — Eco Farm v4.0
 
-## High-Level Architecture
+This document contains flow and structural diagrams detailing the **Eco Farm v4.0** micro-cybernetic infrastructure.
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                         CLIENT LAYER                             │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
-│  │   Mobile    │  │     Web     │  │     PWA     │            │
-│  │     App     │  │  Dashboard  │  │             │            │
-│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘            │
-│         │                 │                 │                   │
-│         └─────────────────┼─────────────────┘                   │
-│                           │                                     │
-└───────────────────────────┼─────────────────────────────────────┘
-                            │
-                            ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                       API GATEWAY LAYER                          │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │  Kong / AWS API Gateway                                   │   │
-│  │  - Authentication & Authorization                         │   │
-│  │  - Rate Limiting                                          │   │
-│  │  - Request Routing                                        │   │
-│  │  - Load Balancing                                         │   │
-│  └──────────────────────────────────────────────────────────┘   │
-└──────────────────────────────────────────────────────────────────┘
-                            │
-        ┌───────────────────┼───────────────────┐
-        │                   │                   │
-        ▼                   ▼                   ▼
-┌───────────────┐  ┌───────────────┐  ┌───────────────┐
-│   USER        │  │ GAMIFICATION  │  │      AI       │
-│   SERVICE     │  │    SERVICE    │  │   SERVICE     │
-└───────────────┘  └───────────────┘  └───────────────┘
-        │                   │                   │
-        ▼                   ▼                   ▼
-┌───────────────┐  ┌───────────────┐  ┌───────────────┐
-│   REALTIME    │  │   CONTENT     │  │ INTEGRATION   │
-│   SERVICE     │  │   SERVICE     │  │   SERVICE     │
-└───────────────┘  └───────────────┘  └───────────────┘
-        │                   │                   │
-        └───────────────────┼───────────────────┘
-                            │
-                            ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                         DATA LAYER                               │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐       │
-│  │PostgreSQL│  │ MongoDB  │  │  Redis   │  │ InfluxDB │       │
-│  └──────────┘  └──────────┘  └──────────┘  └──────────┘       │
-└──────────────────────────────────────────────────────────────────┘
-```
+---
 
-## Data Flow for Mission Completion
+## 1. High-Level Cognitive Architecture Flow
 
 ```
-User (Mobile App)
-    │
-    ▼
-API Gateway (JWT validation)
-    │
-    ▼
-Gamification Service
-    │
-    ├──► Validate mission requirements
-    ├──► AI Service (image verification)
-    │       │
-    │       ▼
-    │   Computer Vision Model
-    │       │
-    │       ▼
-    │   Verification Result
-    │
-    ▼
-Update MongoDB (mission state)
-    │
-    ▼
-Award Points/Badges
-    │
-    ├──► Update Redis (leaderboard)
-    ├──► Update PostgreSQL (user points)
-    └──► Send Notification (Real-time Service)
-            │
-            ▼
-        Push Notification to User
+                      [ Farmer BCI Neural Headset ]
+                                   │
+                                   ▼
+    [ Attention / Stress / Cognitive Load Scores Recorded ]
+                                   │
+                                   ▼
+       [ Recorded to PostgreSQL via BciModule (Port 3000) ]
+                                   │
+                                   ▼
+           [ HUD visuals automatically adjust in density ]
 ```
 
-## AI/ML Pipeline
+---
+
+## 2. LoRaWAN Edge IoT Telemetry Flow
 
 ```
-Training Data
-    │
-    ▼
-Data Preprocessing
-    │
-    ▼
-Feature Engineering
-    │
-    ▼
-Model Training (TensorFlow/PyTorch)
-    │
-    ├──► Pest Detection Model
-    ├──► Yield Prediction Model
-    ├──► NLP Chatbot Model
-    └──► Recommendation Model
-    │
-    ▼
-Model Registry (MLflow)
-    │
-    ▼
-Model Serving
-    │
-    ├──► TensorFlow Serving (Server)
-    ├──► TensorFlow Lite (Mobile)
-    └──► ONNX Runtime (Edge)
-    │
-    ▼
-API Endpoints
-    │
-    ▼
-Production Inference
+   [ LoRaWAN Soil & Leaf Electrophysiology Sensor Devices ]
+                               │
+                               ▼
+        [ Edge-Inference via PyTorch LIF-SNN Classifier ]
+                               │
+            ┌──────────────────┴──────────────────┐
+            ▼ (Backhaul Up)                       ▼ (Backhaul Down)
+  [ Recorded to TimescaleDB ]             [ Logged to local JSON ]
+  [ composite: time+deviceId+metric ]     [ Outage Alert Buffer  ]
+                                                  │
+                                                  ▼ (Reconnected)
+                                          [ Flushed to Gateway ]
 ```
 
-## Deployment Architecture (Kubernetes)
+---
+
+## 3. CRISPR PCR Pathogen DNA Diagnostics Flow
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    KUBERNETES CLUSTER                       │
-│                                                             │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │              Load Balancer (Nginx)                   │  │
-│  └──────────────────────┬───────────────────────────────┘  │
-│                         │                                   │
-│         ┌───────────────┼───────────────┐                  │
-│         │               │               │                   │
-│  ┌──────▼──────┐  ┌─────▼──────┐  ┌─────▼──────┐         │
-│  │   API       │  │   API      │  │   API      │         │
-│  │  Gateway    │  │  Gateway   │  │  Gateway   │         │
-│  │  Pod 1      │  │  Pod 2     │  │  Pod 3     │         │
-│  └─────────────┘  └────────────┘  └────────────┘         │
-│                                                             │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │              Service Mesh (Istio)                    │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                             │
-│  ┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐        │
-│  │User  │  │Gamif │  │ AI   │  │Real- │  │Content│        │
-│  │Svc   │  │Svc   │  │ Svc  │  │time  │  │ Svc   │        │
-│  └──────┘  └──────┘  └──────┘  └──────┘  └──────┘        │
-│                                                             │
-│  ┌──────┐  ┌──────┐  ┌──────┐                             │
-│  │Post- │  │Mongo │  │Redis │                             │
-│  │gres  │  │ DB   │  │      │                             │
-│  └──────┘  └──────┘  └──────┘                             │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+                [ Raw PCR DNA Sequence Captured ]
+                               │
+                               ▼
+     [ Sent to FastAPI Bioinformatics Service (Port 3008) ]
+                               │
+                               ▼
+     [ Sequence aligned via Needleman-Wunsch Algorithm ]
+                               │
+                               ▼
+           [ Is Alignment Score > 75% & Cas Active? ]
+            ┌──────────────────┴──────────────────┐
+            ▼ Yes                                 ▼ No
+  [ Critical Pathogen Detected ]          [ Crop Registers Healthy ]
+  [ Fetch RAG Treatment Bio-Spray ]
+  [ Record DiseaseEvent to PostgreSQL ]
 ```
 
-## Offline-First Architecture
+---
+
+## 4. Decentralized Post-Quantum Ledger Flow
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Mobile Device                             │
-│                                                             │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │              React Native App                        │  │
-│  │                                                      │  │
-│  │  ┌──────────────┐  ┌──────────────┐                │  │
-│  │  │   Redux      │  │  SQLite      │                │  │
-│  │  │   Store      │  │  (Offline)   │                │  │
-│  │  └──────────────┘  └──────────────┘                │  │
-│  │                                                      │  │
-│  │  ┌──────────────────────────────────────────────┐   │  │
-│  │  │      Action Queue (Redux Offline)            │   │  │
-│  │  └──────────────────────────────────────────────┘   │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                         │                                   │
-│                         │ Online                            │
-│                         ▼                                   │
-└─────────────────────────────────────────────────────────────┘
-                         │
-                         ▼
-              ┌──────────────────────┐
-              │   API Gateway        │
-              └──────────────────────┘
-                         │
-                         ▼
-              ┌──────────────────────┐
-              │   Sync Service       │
-              │   - Process queue    │
-              │   - Resolve conflicts│
-              └──────────────────────┘
+               [ Calculated Carbon Offsets (Tonnes) ]
+                               │
+                               ▼
+          [ Signed via CRYSTALS-Dilithium Private Key ]
+                               │
+                               ▼
+        [ Enclosed in AES-GCM Envelope asymmetric wrapper ]
+                               │
+                               ▼
+       [ Sent to Solana ledger minting (BlockchainModule) ]
+                               │
+                               ▼
+     [ Simulated Minting TX Receipt Recorded in CarbonCredit ]
 ```
-
-## Security Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    SECURITY LAYERS                          │
-│                                                             │
-│  1. Network Layer                                           │
-│     └─► VPC, Security Groups, WAF                          │
-│                                                             │
-│  2. Transport Layer                                         │
-│     └─► TLS 1.3, Certificate Management                    │
-│                                                             │
-│  3. Application Layer                                       │
-│     └─► OAuth 2.0, JWT, RBAC                               │
-│                                                             │
-│  4. Data Layer                                              │
-│     └─► Encryption at Rest (AES-256)                       │
-│     └─► Field-level Encryption                             │
-│                                                             │
-│  5. Monitoring Layer                                        │
-│     └─► Audit Logs, Intrusion Detection                    │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
-
-

@@ -1,28 +1,17 @@
-# Yield Prediction Model
+# 📈 Yield Prediction & Cognitive Optimizations — Eco Farm v4.0
 
-## Overview
-Predictive model for estimating crop yield based on historical data, weather, and farm conditions.
+This module estimates crop yield by uniting historical meteorological records, LoRaWAN sensor feeds, and post-quantum crop rotation solver engines.
 
-## Model Architecture
-- Primary Model: XGBoost
-- Time Series: Prophet (for seasonal trends)
-- Ensemble: Weighted average of both models
+---
 
-## Features
-- Historical yield data
-- Weather patterns (temperature, rainfall)
-- Soil health metrics
-- Crop type and variety
-- Farm size and location
+## ⚡ Integrated Models & Solvers
 
-## Deployment
-- Training: Scheduled weekly
-- Inference API: `/api/v1/ai/predict/yield`
-- Batch Processing: Apache Spark ML
+1. **Machine Learning Ensemble:**
+   - **XGBoost & Prophet Regressors:** Predicts seasonal crop productivity using historical TimescaleDB IoT sensor readings.
+   - **Inference Endpoint:** `/api/v1/ai/predict/yield`
 
-## Performance
-- RMSE: ~250 kg/hectare
-- R² Score: 0.85
-- Prediction Interval: 95% confidence
+2. **Quantum Crop Rotation Optimization (QAOA):**
+   - **Qiskit QAOA Engine:** Solves the combinatorial quadratic equations of multi-season crop sequencing to maximize cumulative soil nitrogen recovery and yield (`POST /quantum/optimize`).
 
-
+3. **Cognitive Overlay (BCI Autopilot):**
+   - **BCI Feedback Integration:** Adjusts visual yield forecast overlays dynamically based on the farmer's cognitive workload and focus states.

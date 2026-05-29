@@ -1,6 +1,17 @@
-# 🌾 Eco Farm v3.0 — Solarpunk Cognitive Agriculture OS
+# 🌾 Eco Farm v4.0 — The Post-Quantum Solarpunk Cognitive Agriculture OS
 
-Welcome to the production-ready monorepo for the **Eco Farm v3.0** platform, featuring zero-trust biometric authentication, decentralized carbon ledger minting, real-time bioinformatics, and autonomous AI query routing.
+Welcome to the production-ready monorepo for **Eco Farm v4.0**, a state-of-the-art cognitive agriculture operating system. It fuses **spiking neural networks (SNN)**, **brain-computer interfaces (BCI)**, **post-quantum cryptography (CRYSTALS-Dilithium)**, **CRISPR diagnostics**, **LoRaWAN edge telemetry**, and **decentralized Solana ledgers** into a zero-trust, offline-first agricultural engine.
+
+---
+
+## 🚀 Architectural Vision & High-Tech Core
+
+Eco Farm v4.0 represents the convergence of synthetic biology, quantum computing, and bio-cybernetics:
+1. **LIF Spiking Neural Network (Edge AI):** A temporal Leaky Integrate-and-Fire neural network in PyTorch classifying plant pathogens on the edge with a fault-tolerant local outage buffer.
+2. **CRISPR Sequence Alignment:** Real-time dynamic programming (Needleman-Wunsch global sequence aligner) that compares raw PCR field DNA sequence reads against target pathogen marker databases.
+3. **BCI Cognitive Autopilot:** A brain-computer interface overlay tracking farmer attention, stress, and cognitive load to auto-adjust telemetry overlays.
+4. **Post-Quantum Cryptography:** CRYSTALS-Dilithium signature modeling and double-envelope key-wrapping GCM methods.
+5. **Solana Blockchain Minting:** Locally simulated, production-ready minting of verified carbon credit tokens with IPFS and Dilithium signature proofs.
 
 ---
 
@@ -10,16 +21,16 @@ Our codebase is organized as a Turborepo-managed `pnpm` workspace structure:
 
 ```
 eco-farm-monorepo/
-├── .github/             # GitHub Actions workflows (Relocated to root for automated CI/CD execution)
+├── .github/             # Automated CI/CD K8s workflows (supporting Base64 & plaintext Kubeconfig)
 ├── apps/
-│   ├── api/             # NestJS API Gateway (Graceful SIGTERM, Redlock Quorum, Envelope Encryption)
+│   ├── api/             # NestJS API Gateway (BCI, Sensor, Disease, Quantum, and Blockchain modules)
 │   ├── mcp-server/      # Express WebMCP Server (search_knowledge, mint_carbon_credit)
-│   ├── web/             # farmquest-web-dashboard (Solarpunk particles, synth, CLI Next.js client)
-│   ├── agents/          # LangGraph Multi-Agent Engine (FastAPI agent query routing)
-│   ├── bioinformatics/  # CRISPR DNA sequence alignment pipeline (FastAPI)
-│   └── mobile/          # React Native mobile client (Successfully scoped in workspace renames)
+│   ├── web/             # farmquest-web-dashboard (Solarpunk particles, Next.js PWA client HUD)
+│   ├── agents/          # Multi-Agent Routing Engine & PyTorch LIF-SNN Edge Classifier
+│   ├── bioinformatics/  # CRISPR DNA sequence alignment pipeline (FastAPI & Needleman-Wunsch aligner)
+│   └── mobile/          # React Native mobile client HUD
 ├── packages/
-│   └── db/              # Shared database module (Prisma client & migrations)
+│   └── db/              # Shared database module (Prisma client & Postgres migrations)
 ├── docs/
 │   └── architecture/    # Consolidated system specs and architecture diagrams
 ├── database/
@@ -39,7 +50,7 @@ When running locally, services run on these assigned ports:
 - **NestJS API Gateway:** Port `3000` (FastAPI / Prisma Client / WebAuthn)
 - **WebMCP Server:** Port `3001` (MCP tools bridge over Express endpoint `/mcp`)
 - **Next.js PWA Client:** Port `3007` (Visual glassmorphic dashboard HUD)
-- **CRISPR Diagnostics:** Port `3008` (Cas12/Cas13 sequence alignment APIs)
+- **CRISPR Diagnostics:** Port `3008` (Cas12/Cas13 Needleman-Wunsch sequence alignment APIs)
 - **LangGraph Agent:** Port `8000` (FastAPI query routing engine)
 
 ---
@@ -102,9 +113,9 @@ python -m uvicorn apps.agents.src.main:app --host 0.0.0.0 --port 8000
 
 ---
 
-## 🔒 Security & Attestations
+## 🔒 Security, Trust & Attestations
 
-1. **Zero-Trust Passkeys:** WebAuthn endpoints verify hardware biometric keys and persist metadata in the PostgreSQL store.
-2. **TEE Enclave Proofs:** Gateway maps hardware attestation claims (Intel TDX / AWS Nitro) with development fallbacks.
-3. **Solana Blockchain Minting:** Carbon credit tokens are signed and simulated locally when RPC endpoints are offline.
-4. **Fault-Tolerant Session Ring:** Authenticates split-token hashes dynamically using the 5-node parallel Redis Master Quorum Ring.
+1. **Post-Quantum Encrypted Enclaves:** WebAuthn hardware biometric key verification combined with CRYSTALS-Dilithium signature signing schemas.
+2. **TEE Intel TDX Attestation:** Gateway mappings verify hardware attestation claims with fallback mocks.
+3. **Solana Blockchain Ledger:** Multi-sig minting of verified carbon credit tokens simulating both offline and online states.
+4. **TimescaleDB Telemetry:** Composite primary keys (`[time, deviceId, metric]`) secure high-velocity IoT telemetry in TimescaleDB hypertable indexes.

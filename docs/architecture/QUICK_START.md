@@ -1,145 +1,116 @@
-# Quick Start Guide
+# 🚀 Quick Start Guide — Eco Farm v4.0
 
-## Architecture Overview
+This guide gets you up and running with **Eco Farm v4.0 (Solarpunk Cognitive Agriculture OS)** in under 5 minutes.
 
-This platform uses a **microservices architecture** with the following components:
+---
 
-### Core Services
-1. **API Gateway** - Entry point for all requests (Node.js)
-2. **User Service** - User management & authentication (Node.js + PostgreSQL)
-3. **Gamification Service** - Missions, points, badges (Python + MongoDB)
-4. **AI Service** - ML models, chatbot, predictions (Python + FastAPI)
-5. **Real-time Service** - Live chat, streaming (Node.js + Socket.io)
-6. **Content Service** - Multilingual content delivery (Node.js)
-7. **Integration Service** - External APIs (Python)
+## 🏗️ Technical Architecture Core
 
-### Data Storage
-- **PostgreSQL** - User data, transactions
-- **MongoDB** - Missions, community content
-- **Redis** - Caching, sessions, leaderboards
-- **InfluxDB** - Time-series data (IoT, metrics)
+Our monorepo is built on **pnpm workspaces** and managed by **Turborepo**:
+- **NestJS API Gateway** (`apps/api`): Port `3000`
+- **WebMCP Server** (`apps/mcp-server`): Port `3001`
+- **Next.js Dashboard** (`apps/web`): Port `3007`
+- **CRISPR Alignment Service** (`apps/bioinformatics`): Port `3008` (Python FastAPI)
+- **LangGraph Routing Agent** (`apps/agents`): Port `8000` (Python FastAPI & PyTorch SNN)
 
-### Infrastructure
-- **Docker** - Containerization
-- **Kubernetes** - Orchestration
-- **Terraform** - Infrastructure as Code
-- **Prometheus + Grafana** - Monitoring
+---
 
-## Getting Started
+## ⚡ Local Setup Steps
 
-### Option 1: Docker Compose (Local Development)
-
+### 1. Install Workspace Packages
 ```bash
-# Clone repository
-git clone <repo-url>
-cd eco-farm-platform
-
-# Start all services
-docker-compose up -d
-
-# Check status
-docker-compose ps
-
-# View logs
-docker-compose logs -f api-gateway
+pnpm install
 ```
 
-### Option 2: Kubernetes (Production)
-
+### 2. Initialize the User-Space Database (PostgreSQL 18)
+To prevent privilege prompt popups or native port conflicts, we initialize and run PostgreSQL on port `5433`:
 ```bash
-# Create namespace
-kubectl apply -f infrastructure/kubernetes/namespace.yaml
+# Initialize PostgreSQL directory
+initdb -D database/local_pg_data -U postgres --auth=trust
 
-# Create secrets
-kubectl create secret generic ecofarm-secrets \
-  --from-literal=jwt-secret=your-secret \
-  --from-literal=db-password=your-password \
-  -n ecofarm
+# Start the PostgreSQL service
+pg_ctl -D database/local_pg_data -o "-p 5433" -l database/local_pg_data/server.log start
 
-# Deploy services
-kubectl apply -f infrastructure/kubernetes/
+# Create the ecofarm database
+psql -U postgres -p 5433 -h localhost -d postgres -c "CREATE DATABASE ecofarm;"
 ```
 
-## Service URLs (Local)
-
-- API Gateway: http://localhost:3000
-- User Service: http://localhost:3001
-- Gamification Service: http://localhost:3002
-- AI Service: http://localhost:3003
-- PostgreSQL: localhost:5432
-- MongoDB: localhost:27017
-- Redis: localhost:6379
-
-## Testing the API
-
+### 3. Build Packages & Push Schema
+Generate Prisma client and build typescript dependencies:
 ```bash
-# Health check
-curl http://localhost:3000/health
+# Build and compile all workspaces
+pnpm run build
 
-# Register user
-curl -X POST http://localhost:3000/api/v1/users/auth/register \
+# Push models directly to the database
+pnpm --filter @eco-farm/db exec prisma db push --accept-data-loss
+```
+
+### 4. Start all Services
+```bash
+# NestJS Backend API (Port 3000)
+pnpm --filter @eco-farm/api run dev
+
+# WebMCP Server (Port 3001)
+pnpm --filter @eco-farm/mcp-server run dev
+
+# Next.js Solarpunk HUD Dashboard (Port 3007)
+pnpm --filter farmquest-web-dashboard run dev
+
+# FastAPI CRISPR PCR Aligner (Port 3008)
+python apps/bioinformatics/src/main.py
+
+# FastAPI LangGraph SNN Agent (Port 8000)
+python -m uvicorn apps.agents.src.main:app --host 0.0.0.0 --port 8000
+```
+
+---
+
+## 📡 Verifying Endpoints via cURL
+
+Open a new shell and execute these functional, verified cURL commands to test the running API stack:
+
+### 🧠 Brain-Computer Interface (BCI State)
+```bash
+curl -X POST http://localhost:3000/bci/state \
   -H "Content-Type: application/json" \
   -d '{
-    "phone": "+911234567890",
-    "password": "test123",
-    "name": "Test User",
-    "language": "en"
-  }'
-
-# Login
-curl -X POST http://localhost:3000/api/v1/users/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "phone": "+911234567890",
-    "password": "test123"
+    "userId": "usr_dev_01",
+    "attentionScore": 0.88,
+    "stressLevel": 0.15,
+    "cognitiveLoad": 0.32
   }'
 ```
 
-## Development Workflow
+### 📡 LoRaWAN IoT Sensor Telemetry
+```bash
+curl -X POST http://localhost:3000/sensors/reading \
+  -H "Content-Type: application/json" \
+  -d '{
+    "time": "2026-05-30T00:00:00Z",
+    "deviceId": "dev_soil_moisture_01",
+    "metric": "moisture",
+    "value": 42.5
+  }'
+```
 
-1. **Choose a service** to work on (e.g., `services/user-service`)
-2. **Install dependencies**: `npm install` or `pip install -r requirements.txt`
-3. **Set environment variables**: Copy `.env.example` to `.env`
-4. **Start service**: `npm start` or `python src/main.py`
-5. **Make changes** and test locally
-6. **Commit and push** to trigger CI/CD
+### 🧬 CRISPR PCR sequence alignment (FastAPI)
+```bash
+curl -X POST http://localhost:3008/api/bioinformatics/align-pcr \
+  -H "Content-Type: application/json" \
+  -d '{
+    "probe_id": "pcr_probe_rice_01",
+    "sequence_read": "ATGCGTCGATTCGATCGATTCGAT",
+    "fluorescence_intensity": 0.89
+  }'
+```
 
-## Key Features Implementation Status
-
-### ✅ Completed
-- Architecture documentation
-- Service scaffolding
-- Docker & Kubernetes configs
-- Database schemas
-- CI/CD pipelines
-- Monitoring setup
-
-### 🚧 In Progress / TODO
-- Implement ML models (pest detection, yield prediction)
-- Build React Native mobile app
-- Implement AR mission system
-- Set up blockchain integration
-- Deploy to cloud infrastructure
-
-## Next Steps
-
-1. **Set up local development environment**
-2. **Implement core business logic** in each service
-3. **Train and deploy ML models**
-4. **Build client applications** (mobile, web, PWA)
-5. **Set up monitoring and alerts**
-6. **Deploy to production**
-
-## Documentation
-
-- [Complete Architecture](./ARCHITECTURE.md)
-- [API Documentation](../docs/API.md)
-- [Deployment Guide](../docs/DEPLOYMENT.md)
-- [Security Guidelines](../docs/SECURITY.md)
-- [Contributing Guide](../docs/CONTRIBUTING.md)
-
-## Support
-
-For questions or issues, please open an issue on GitHub or contact the development team.
-
-
+### 💻 Quantum Crop Rotation Solver (QAOA)
+```bash
+curl -X POST http://localhost:3000/quantum/optimize \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fieldSizeAcres": 150.0,
+    "availableCrops": ["Wheat", "Barley", "Soybean"],
+    "nitrogenContent": 0.65
+  }'
+```

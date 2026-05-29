@@ -1,58 +1,37 @@
-# Kubernetes Deployment Guide
+# ☸️ Kubernetes Deployment Orchestration — Eco Farm v4.0
 
-## Prerequisites
+This workspace houses the declarative manifest specifications for deploying **Eco Farm v4.0 (Solarpunk Cognitive Agriculture OS)** onto high-availability cloud cluster nodes.
 
-- Kubernetes cluster (v1.24+)
-- kubectl configured
-- Docker registry access
+---
 
-## Setup
+## 🏗️ Declared Deployment Components
 
-1. Create namespace:
+1. **PostgreSQL & Redis DB:** Configured under `postgres-deployment.yaml`.
+2. **NestJS Gateway API:** Port `3000` deployment target.
+3. **WebMCP Server:** Port `3001` bridge target.
+4. **CRISPR Diagnostics:** Port `3008` (Needleman-Wunsch Python aligner).
+5. **LangGraph Edge AI Agent:** Port `8000` (PyTorch LIF-SNN Edge).
+
+---
+
+## ⚡ Deployment Sequence
+
+### 1. Apply Namespace
 ```bash
 kubectl apply -f namespace.yaml
 ```
 
-2. Create secrets:
+### 2. Set Up Environment Secrets
+Create cluster-wide database connections and post-quantum keys:
 ```bash
 kubectl create secret generic ecofarm-secrets \
-  --from-literal=jwt-secret=your-secret-key \
-  --from-literal=db-user=postgres \
-  --from-literal=db-password=your-password \
+  --from-literal=database-url=postgresql://postgres@localhost:5433/ecofarm \
+  --from-literal=solana-rpc-url=https://api.mainnet-beta.solana.com \
   -n ecofarm
 ```
 
-3. Deploy databases:
+### 3. Deploy Databases & Services
 ```bash
-kubectl apply -f postgres-deployment.yaml
-kubectl apply -f mongodb-deployment.yaml
-kubectl apply -f redis-deployment.yaml
+kubectl apply -f postgres-deployment.yaml -n ecofarm
+kubectl apply -f api-gateway-deployment.yaml -n ecofarm
 ```
-
-4. Deploy services:
-```bash
-kubectl apply -f user-service-deployment.yaml
-kubectl apply -f api-gateway-deployment.yaml
-# ... other services
-```
-
-## Scaling
-
-To scale services:
-```bash
-kubectl scale deployment api-gateway --replicas=5 -n ecofarm
-```
-
-## Monitoring
-
-Check pod status:
-```bash
-kubectl get pods -n ecofarm
-```
-
-View logs:
-```bash
-kubectl logs -f deployment/api-gateway -n ecofarm
-```
-
-

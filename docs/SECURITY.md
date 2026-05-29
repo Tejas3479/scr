@@ -1,54 +1,31 @@
-# Security Guidelines
+# 🔒 Security and Cryptography Specification — Eco Farm v4.0
 
-## Authentication & Authorization
+Eco Farm v4.0 implements a multi-layered, zero-trust security framework tailored for solarpunk cognitive agricultural operations.
 
-- All API endpoints (except public auth endpoints) require JWT authentication
-- JWT tokens expire after 15 minutes
-- Use refresh tokens for extended sessions
-- Implement role-based access control (RBAC)
+---
 
-## Data Encryption
+## 1. Zero-Trust Hardware Biometrics (WebAuthn)
 
-- **At Rest**: AES-256 encryption for all databases
-- **In Transit**: TLS 1.3 for all communications
-- **Sensitive Fields**: Field-level encryption for PII data
+- **Passkey Credentials:** Eliminates passwords. Biometric verification (face/fingerprint) is executed on the farmer's hardware authenticator.
+- **Verification Flow:** The gateway verifies public key assertions and enrolls user-credentials securely via `@eco-farm/api` (`POST /auth/passkey/register-verify` and `POST /auth/passkey/login-verify`).
 
-## Secrets Management
+---
 
-- Never commit secrets to version control
-- Use Kubernetes secrets or HashiCorp Vault
-- Rotate secrets regularly
-- Use environment variables for configuration
+## 2. Post-Quantum Cryptography (PQC)
 
-## API Security
+- **CRYSTALS-Dilithium:** Modern post-quantum signature schemes are simulated to secure sustainability certifications, blockchain ledgers, and device identities against quantum attacks.
+- **Double-Envelope Key-Wrapping:** Symmetric credentials and LoRaWAN packets are encrypted using standard AES-GCM-256 wrapped within quantum-safe asymmetric envelopes.
 
-- Rate limiting on all endpoints
-- Input validation and sanitization
-- SQL injection prevention (use parameterized queries)
-- XSS protection
-- CORS configuration
+---
 
-## Infrastructure Security
+## 3. Trusted Execution Environments (TEE)
 
-- Private subnets for services
-- Security groups with least privilege
-- Regular security audits
-- Penetration testing
-- DDoS protection (Cloudflare/AWS Shield)
+- **Hardware Attestation:** Validates remote computing node integrity (Intel TDX / AWS Nitro) via the `TeeVerifierService` (`POST /auth/attest`).
+- **Development Fallback:** Mocks TEE receipts gracefully for rapid sandbox verification without failing local CI/CD pipelines.
 
-## Compliance
+---
 
-- GDPR compliance for EU users
-- India PDPA compliance
-- Agricultural data privacy standards
-- Audit logging for all actions
+## 4. Distributed Session Quorum (Redlock)
 
-## Best Practices
-
-1. Keep dependencies updated
-2. Regular vulnerability scanning
-3. Use HTTPS everywhere
-4. Implement WAF (Web Application Firewall)
-5. Regular backup and disaster recovery testing
-
-
+- **Parallel Redis Ring:** Distributed quorums verify split-token session keys across a 5-node parallel Redis Master Quorum Ring.
+- **SIGTERM Safety:** Ensures database and session connections are terminated gracefully during failovers.

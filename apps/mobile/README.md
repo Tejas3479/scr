@@ -1,65 +1,27 @@
-# Client Applications
+# 📱 Mobile Client (React Native HUD) — Eco Farm v4.0
 
-## Mobile App (React Native)
+This workspace contains the React Native mobile HUD client that acts as the physical field assistant for farmers operating the Solarpunk Cognitive Agriculture OS.
 
-### Setup
-```bash
-cd client/mobile
-npm install
-npx pod-install  # iOS only
-```
+---
 
-### Development
-```bash
-npm start
-# or
-npm run android
-npm run ios
-```
+## ⚡ Key Features
 
-### Features
-- Offline-first architecture
-- AR mission support
-- Voice interface
-- Biometric authentication
-- Push notifications
+1. **BCI Focus HUD:** Floating telemetry indicators tracking focus and cognitive load.
+2. **Offline LIF-SNN Alerts:** Monitors soil moisture and foliar bio-telemetry, showing offline buffering alerts when LoRaWAN backhaul is interrupted.
+3. **Biometric Security:** Enrolls WebAuthn passkeys via the NestJS API gateway.
+4. **Interactive AR Diagnostics:** Superimposes yield projections and PCR alignment traces onto active crop rows.
 
-## Web Dashboard
+---
 
-### Setup
-```bash
-cd client/web
-npm install
-```
+## 🛠️ Onboarding & Running
 
-### Development
-```bash
-npm run dev
-```
-
-### Production Build
-```bash
-npm run build
-npm start
-```
-
-## Progressive Web App (PWA)
-
-### Setup
-```bash
-cd client/pwa
-npm install
-```
-
-### Development
-```bash
-npm run dev
-```
-
-### Features
-- Service worker for offline support
-- Installable on mobile devices
-- Web Push notifications
-- Lightweight and optimized
-
-
+1. **Install Dependencies:**
+   ```bash
+   pnpm install
+   ```
+2. **Run iOS / Android Hub:**
+   ```bash
+   pnpm --filter @eco-farm/mobile run ios
+   # or
+   pnpm --filter @eco-farm/mobile run android
+   ```

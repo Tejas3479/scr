@@ -1,187 +1,132 @@
-# API Documentation
+# 🔌 API Specification & Endpoint Schema — Eco Farm v4.0
 
-## Base URL
-- Local: `http://localhost:3000/api/v1`
-- Production: `https://api.ecofarm.platform/api/v1`
+This document outlines the API endpoints, request schemas, and response formats of the **Eco Farm v4.0** cognitive gateway and subservices.
 
-## Authentication
+---
 
-Most endpoints require authentication via JWT token:
+## 🔑 Authentication
 
-```
-Authorization: Bearer <token>
-```
+All secure endpoints utilize passkeys or JWT tokens. Passkey biometric validation routes:
 
-## Endpoints
-
-### User Service
-
-#### Register User
-```http
-POST /users/auth/register
-Content-Type: application/json
-
-{
-  "phone": "+911234567890",
-  "password": "securepassword",
-  "name": "John Doe",
-  "language": "en"
-}
-```
-
-#### Login
-```http
-POST /users/auth/login
-Content-Type: application/json
-
-{
-  "phone": "+911234567890",
-  "password": "securepassword"
-}
-```
-
-#### Get Profile
-```http
-GET /users/profile
-Authorization: Bearer <token>
-```
-
-#### Update Profile
-```http
-PUT /users/profile
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "name": "John Doe",
-  "language": "hi",
-  "avatar_url": "https://..."
-}
-```
-
-### Gamification Service
-
-#### Get Missions
-```http
-GET /gamification/missions?user_id=<user_id>&language=en
-Authorization: Bearer <token>
-```
-
-#### Complete Mission
-```http
-POST /gamification/missions/{mission_id}/complete
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "mission_id": "mission_001",
-  "user_id": "user_123",
-  "evidence": {
-    "image_url": "https://...",
-    "notes": "Completed successfully"
-  }
-}
-```
-
-#### Get Leaderboard
-```http
-GET /gamification/leaderboard?limit=100&offset=0
-Authorization: Bearer <token>
-```
-
-### AI Service
-
-#### Chat with AI Assistant
-```http
-POST /ai/chat
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "message": "How to control aphids?",
-  "language": "hi",
-  "user_id": "user_123"
-}
-```
-
-#### Analyze Image
-```http
-POST /ai/image/analyze
-Authorization: Bearer <token>
-Content-Type: multipart/form-data
-
-file: <image_file>
-```
-
-#### Get Recommendations
-```http
-POST /ai/recommendations
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "user_id": "user_123",
-  "context": {
-    "farm_type": "organic",
-    "season": "kharif"
-  }
-}
-```
-
-#### Predict Yield
-```http
-POST /ai/predict/yield
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "crop_type": "rice",
-  "farm_size": 2.5,
-  "location": {
-    "latitude": 19.0760,
-    "longitude": 72.8777
-  }
-}
-```
-
-## Response Format
-
-### Success Response
+### 1. Register Options
+`POST /auth/passkey/register-options`
 ```json
 {
-  "data": { ... },
-  "status": "success"
+  "id": "cuid_user_123",
+  "email": "farmer@solarpunk.org"
 }
 ```
 
-### Error Response
+### 2. Verify Registration
+`POST /auth/passkey/register-verify`
 ```json
 {
-  "error": "Error message",
-  "status": "error",
-  "code": 400
+  "userId": "cuid_user_123",
+  "attestation": { ... }
 }
 ```
 
-## Rate Limiting
+### 3. TEE Attestation Check
+`POST /auth/attest`
+```json
+{
+  "docHex": "abcdef0123456789...",
+  "dataHex": "1122334455667788..."
+}
+```
 
-- 100 requests per 15 minutes per IP
-- Rate limit headers included in response:
-  - `X-RateLimit-Limit`
-  - `X-RateLimit-Remaining`
-  - `X-RateLimit-Reset`
+---
 
-## Status Codes
+## 🧠 Brain-Computer Interface (BCI)
 
-- `200` - Success
-- `201` - Created
-- `400` - Bad Request
-- `401` - Unauthorized
-- `403` - Forbidden
-- `404` - Not Found
-- `409` - Conflict
-- `429` - Too Many Requests
-- `500` - Internal Server Error
-- `503` - Service Unavailable
+### 1. Record Cognitive State
+`POST /bci/state`
+```json
+{
+  "userId": "cuid_user_123",
+  "attentionScore": 0.85,
+  "stressLevel": 0.21,
+  "cognitiveLoad": 0.45
+}
+```
 
+### 2. Retrieve History
+`GET /bci/history/:userId?limit=50`
 
+---
+
+## 📡 Sensor & Telemetry
+
+### 1. Register LoRaWAN IoT Device
+`POST /sensors/register`
+```json
+{
+  "devEUI": "00250C0000010203",
+  "type": "soil_moisture",
+  "farmId": "cuid_farm_abc"
+}
+```
+
+### 2. Record Sensor Telemetry
+`POST /sensors/reading`
+```json
+{
+  "time": "2026-05-30T00:00:00Z",
+  "deviceId": "cuid_device_xyz",
+  "metric": "moisture_percentage",
+  "value": 45.8
+}
+```
+
+---
+
+## 🌾 Farm Management & Boundaries
+
+### 1. Register Farm Row
+`POST /farms`
+```json
+{
+  "name": "North Field CRISPR Corn",
+  "boundary": {
+    "type": "Polygon",
+    "coordinates": [[[72.87, 19.07], [72.88, 19.07], [72.88, 19.08], [72.87, 19.08], [72.87, 19.07]]]
+  },
+  "userId": "cuid_user_123"
+}
+```
+
+---
+
+## 🔬 Bioinformatics & Disease Events
+
+### 1. Log CRISPR Pathogen Event
+`POST /disease/event`
+```json
+{
+  "farmId": "cuid_farm_abc",
+  "plotGeometry": { "type": "Point", "coordinates": [72.877, 19.076] },
+  "crisprResult": "Rice Blast Fungus (Magnaporthe oryzae)",
+  "imageUrl": "https://ipfs.io/ipfs/QmXyZ..."
+}
+```
+
+### 2. Align Raw Field PCR Probes (FastAPI - Port 3008)
+`POST /api/bioinformatics/align-pcr`
+```json
+{
+  "probe_id": "probe_rc_01",
+  "sequence_read": "ATGCGTCGATTCGATCGATTCGAT",
+  "fluorescence_intensity": 0.82
+}
+```
+**Response (Pathogen Detected):**
+```json
+{
+  "pathogen_detected": "Rice Blast Fungus (Magnaporthe oryzae)",
+  "scientific_name": "Rice Blast Fungus (Magnaporthe oryzae)",
+  "alignment_score": 100.0,
+  "severity_level": "critical",
+  "recommended_treatment": "Deploy Bacillus thuringiensis endophyte strain BT-92 organic spray. [Trace: ||||||||||||||||||||||||]",
+  "cas_collateral_cleavage_active": true
+}
+```

@@ -1,42 +1,16 @@
-# API Gateway Service
+# 🔌 Historical API Gateway Service — Consolidated into `apps/api`
 
-## Overview
-The API Gateway serves as the single entry point for all client requests, handling routing, authentication, rate limiting, and load balancing.
+## ⚠️ Architectural Deprecation Notice
 
-## Features
-- Request routing to microservices
-- JWT-based authentication
-- Rate limiting and DDoS protection
-- Request/response caching (Redis)
-- Health check endpoints
-- Request logging and monitoring
+In **Eco Farm v4.0 (Solarpunk Cognitive Agriculture OS)**, the standalone Node.js Express API Gateway has been fully refactored and consolidated into the unified **NestJS API Gateway workspace** (`apps/api`).
 
-## Setup
+---
 
-```bash
-npm install
-cp .env.example .env
-# Edit .env with your configuration
-npm start
-```
+## ⚡ Active API Infrastructure
 
-## Development
+All endpoints, middleware, TEE attestation verifiers, WebAuthn passkey flows, and Redis distributed locks are executed under:
+- 🚀 **Active Gateway:** [apps/api](file:///c:/Users/tejas/Downloads/scr/apps/api) (Port 3000)
 
-```bash
-npm run dev
-```
-
-## Environment Variables
-See `.env.example` for required environment variables.
-
-## API Routes
-- `/health` - Health check (public)
-- `/api/v1/users/auth/*` - Authentication endpoints (public)
-- `/api/v1/users/*` - User service (protected)
-- `/api/v1/gamification/*` - Gamification service (protected)
-- `/api/v1/ai/*` - AI service (protected)
-- `/api/v1/realtime/*` - Real-time service (protected)
-- `/api/v1/content/*` - Content service (protected)
-- `/api/v1/integrations/*` - Integration service (protected)
-
-
+Please refer to the new core documentation:
+- 📖 [docs/API.md](../../docs/API.md) — Unified Endpoint Specifications.
+- 🏗️ [docs/architecture/ARCHITECTURE.md](../../docs/architecture/ARCHITECTURE.md) — System Architecture Blueprints.
