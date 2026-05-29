@@ -8,6 +8,7 @@ import WeatherWidget from '@/components/WeatherWidget'
 import SpatialTwinCanvas from '@/components/SpatialTwinCanvas'
 import BCIInputManager from '@/components/BCIInputManager'
 import RPPGTracker from '@/components/rPPGTracker'
+import HapticController from '@/components/HapticController'
 import AudioSynthesizerWidget from '@/components/AudioSynthesizerWidget'
 import { playSound } from '@/services/sound'
 
@@ -309,6 +310,9 @@ export default function Dashboard() {
             
             {/* Real-time Audio Synthesizer Widget Embedded */}
             <AudioSynthesizerWidget />
+
+            {/* Bilateral Haptic Robotic Override Widget */}
+            <HapticController />
           </div>
         </div>
 
