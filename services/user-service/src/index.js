@@ -820,8 +820,115 @@ app.get('/api/admin/activities', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+// --- Active Socket Connections Registry ---
+const activeConnections = new Set();
+const server = app.listen(PORT, () => {
   logger.info(`🚀 User Service running on port ${PORT}`);
   logger.info(`📝 Test credentials: Phone: +919876543210, Password: test123`);
   logger.info(`🔗 Health check: http://localhost:${PORT}/health`);
 });
+
+server.on('connection', (socket) => {
+  activeConnections.add(socket);
+  socket.on('close', () => {
+    activeConnections.delete(socket);
+  });
+});
+
+// --- Graceful Connection Drainage and Shutdown ---
+const handleShutdown = async (signal) => {
+  logger.warn(`\n⚠️ Intercepted ${signal}. Triggering User Service Graceful Shutdown (SIGTERM drainage)...`);
+  
+  server.close((err) => {
+    if (err) {
+      logger.error('Error closing HTTP server:', err);
+    } else {
+      logger.info('🔒 HTTP server closed: no new connections will be accepted.');
+    }
+  });
+
+  const drainTimeout = setTimeout(() => {
+    logger.warn('⚠️ Drainage timeout exceeded (30s). Forcefully terminating active connections...');
+    for (const socket of activeConnections) {
+      socket.destroy();
+    }
+  }, 30000);
+
+  const checkDrain = setInterval(async () => {
+    if (activeConnections.size === 0) {
+      clearInterval(checkDrain);
+      clearTimeout(drainTimeout);
+      logger.info('✅ All active connections cleanly drained.');
+
+      logger.info('🔌 Disconnecting PostgreSQL pool...');
+      await pool.end().catch(err => logger.error('Error closing PostgreSQL pool:', err));
+      logger.info('PostgreSQL connection pool closed.');
+
+      if (redisClient && typeof redisClient.disconnect === 'function') {
+        logger.info('🔌 Disconnecting Redis client...');
+        await redisClient.disconnect().catch(err => logger.error('Error disconnecting Redis client:', err));
+        logger.info('Redis client disconnected.');
+      }
+
+      logger.info('💤 User Service shutdown complete. Exiting cleanly.');
+      process.exit(0);
+    } else {
+      logger.info(`⏳ Waiting for ${activeConnections.size} active connection(s) to drain...`);
+    }
+  }, 1000);
+};
+
+process.on('SIGTERM', () => handleShutdown('SIGTERM'));
+process.on('SIGINT', () => handleShutdown('SIGINT'));
+
+// --- Cryptographic Envelope Encryption Module (v14.2 Enterprise Standard) ---
+const crypto = require('crypto');
+
+const getMasterKek = () => {
+  const kekHex = process.env.MASTER_KEK || '63727970746f67726170686963616c6c795f7365637572655f6b656b5f6b6579';
+  return Buffer.from(kekHex, 'hex');
+};
+
+const encryptEnvelope = (plainText) => {
+  const iv = crypto.randomBytes(12);
+  const masterKek = getMasterKek();
+  const dek = crypto.randomBytes(32);
+  
+  const cipher = crypto.createCipheriv('aes-256-gcm', dek, iv);
+  let encrypted = cipher.update(plainText, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  const authTag = cipher.getAuthTag().toString('hex');
+
+  const keyCipher = crypto.createCipheriv('aes-256-cbc', masterKek, iv.slice(0, 16));
+  let wrappedDek = keyCipher.update(dek.toString('hex'), 'utf8', 'hex');
+  wrappedDek += keyCipher.final('hex');
+
+  return {
+    encryptedData: encrypted,
+    iv: iv.toString('hex'),
+    authTag: `${authTag}:${wrappedDek}`
+  };
+};
+
+const decryptEnvelope = (encryptedData, ivHex, authTagPackage) => {
+  try {
+    const [authTagHex, wrappedDekHex] = authTagPackage.split(':');
+    const iv = Buffer.from(ivHex, 'hex');
+    const masterKek = getMasterKek();
+
+    const keyDecipher = crypto.createDecipheriv('aes-256-cbc', masterKek, iv.slice(0, 16));
+    let unwrappedDekHex = keyDecipher.update(wrappedDekHex, 'hex', 'utf8');
+    unwrappedDekHex += keyDecipher.final('utf8');
+    const dek = Buffer.from(unwrappedDekHex, 'hex');
+
+    const decipher = crypto.createDecipheriv('aes-256-gcm', dek, iv);
+    decipher.setAuthTag(Buffer.from(authTagHex, 'hex'));
+    
+    let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  } catch (error) {
+    logger.error('Cryptographic Envelope Decryption failure', error);
+    throw new Error('FAILED_TO_DECRYPT_KEY_ENVELOPE');
+  }
+};
