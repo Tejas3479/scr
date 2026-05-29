@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FarmQuest - Next-Gen Solarpunk Cyber-Agri Universe</title>
+    <title>FarmQuest Nexus - Next-Gen Solarpunk Cyber-Agri Cognitive OS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         /* ===== SOLARPUNK CYBER-AGRI THEME ===== */
         :root {
             --cyber-dark: #0D1117;
             --cyber-darker: #050810;
+            --neon-accent: #00F0FF;
+            --neon-accent-rgb: 0, 240, 255;
             --neon-green: #00FF41;
             --neon-cyan: #00F0FF;
             --neon-purple: #FF00FF;
-            --neon-orange: #FF6B00;
             --neon-pink: #FF006B;
-            --glass-bg: rgba(13, 17, 23, 0.45);
-            --font-display: 'Orbitron', sans-serif;
+            --glass-bg: rgba(13, 17, 23, 0.7);
             --font-mono: 'JetBrains Mono', monospace;
             --font-sans: 'Inter', sans-serif;
         }
@@ -34,10 +34,60 @@
             background-color: var(--cyber-darker);
             color: #ecf0f1;
             overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 255, 65, 0.05) 0%, transparent 40%);
             min-height: 100vh;
+            position: relative;
+        }
+
+        /* Canvas Particle Background */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Cyber grid overlay */
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.012) 97%, transparent 97%),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.012) 97%, transparent 97%);
+            background-size: 30px 30px;
+            z-index: 1;
+        }
+
+        /* Dynamic Atmospheric Gradient Blobs */
+        .blob-container {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .blob {
+            position: absolute;
+            width: 50vw;
+            height: 50vw;
+            border-radius: 50%;
+            filter: blur(150px);
+            opacity: 0.15;
+            transition: all 2s ease-in-out;
+        }
+        .blob-1 {
+            top: 5%;
+            left: 5%;
+            background: radial-gradient(circle, var(--neon-accent) 0%, transparent 70%);
+        }
+        .blob-2 {
+            bottom: 10%;
+            right: 5%;
+            background: radial-gradient(circle, var(--neon-accent) 0%, transparent 70%);
+            animation-delay: 2s;
         }
 
         /* ===== SCROLLBAR ===== */
@@ -48,20 +98,12 @@
             background: var(--cyber-darker);
         }
         ::-webkit-scrollbar-thumb {
-            background: var(--neon-cyan);
+            background: rgba(var(--neon-accent-rgb), 0.4);
             border-radius: 4px;
-            box-shadow: 0 0 10px var(--neon-cyan);
         }
-
-        /* ===== GLOW EFFECTS ===== */
-        .neon-glow-cyan {
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6), 0 0 20px rgba(0, 240, 255, 0.3);
-        }
-        .neon-glow-green {
-            text-shadow: 0 0 10px rgba(0, 255, 65, 0.6), 0 0 20px rgba(0, 255, 65, 0.3);
-        }
-        .neon-glow-purple {
-            text-shadow: 0 0 10px rgba(255, 0, 255, 0.6), 0 0 20px rgba(255, 0, 255, 0.3);
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--neon-accent);
+            box-shadow: 0 0 10px var(--neon-accent);
         }
 
         /* ===== NAVIGATION ===== */
@@ -70,29 +112,43 @@
             top: 0;
             left: 0;
             width: 100%;
-            padding: 1.2rem 5%;
+            padding: 1.2rem 6%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: rgba(5, 8, 16, 0.85);
             backdrop-filter: blur(15px);
-            z-index: 1000;
-            border-b: 1px solid rgba(0, 240, 255, 0.2);
+            z-index: 100;
+            border-b: 1px solid rgba(var(--neon-accent-rgb), 0.25);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            transition: border 1s ease;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-family: var(--font-display);
-            font-weight: 900;
-            font-size: 1.6rem;
-            color: var(--neon-cyan);
-            letter-spacing: 2px;
+            gap: 10px;
+            font-family: var(--font-sans);
+            font-weight: 800;
+            font-size: 1.35rem;
+            color: #ffffff;
+            letter-spacing: 1px;
         }
         .logo span {
-            color: var(--neon-green);
+            color: var(--neon-accent);
+            transition: color 1s ease;
+        }
+        .logo-tag {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            font-weight: 500;
+            border: 1px solid rgba(var(--neon-accent-rgb), 0.4);
+            background: rgba(var(--neon-accent-rgb), 0.1);
+            color: var(--neon-accent);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 6px;
+            transition: all 1s ease;
         }
 
         .nav-links {
@@ -104,48 +160,36 @@
             color: rgba(236, 240, 241, 0.7);
             text-decoration: none;
             font-family: var(--font-mono);
-            font-size: 0.9rem;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
             transition: all 0.3s ease;
-            position: relative;
-            padding: 5px 0;
+            text-transform: uppercase;
         }
         .nav-links a:hover {
-            color: var(--neon-cyan);
-            text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
-        }
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--neon-cyan);
-            transition: width 0.3s ease;
-            box-shadow: 0 0 8px var(--neon-cyan);
-        }
-        .nav-links a:hover::after {
-            width: 100%;
+            color: var(--neon-accent);
+            text-shadow: 0 0 8px rgba(var(--neon-accent-rgb), 0.5);
         }
 
         .btn-connect {
-            background: rgba(0, 240, 255, 0.1);
-            color: var(--neon-cyan);
-            border: 1px solid rgba(0, 240, 255, 0.3);
+            background: rgba(var(--neon-accent-rgb), 0.15);
+            color: var(--neon-accent);
+            border: 1px solid rgba(var(--neon-accent-rgb), 0.4);
             padding: 10px 24px;
             border-radius: 12px;
             font-weight: 700;
             font-family: var(--font-mono);
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 15px rgba(var(--neon-accent-rgb), 0.15);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .btn-connect:hover {
-            background: var(--neon-cyan);
+            background: var(--neon-accent);
             color: var(--cyber-darker);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
-            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(var(--neon-accent-rgb), 0.45);
+            transform: scale(1.02);
         }
 
         /* ===== HERO SECTION ===== */
@@ -155,14 +199,15 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 8%;
-            padding-top: 100px;
+            padding-top: 120px;
             position: relative;
             gap: 40px;
+            z-index: 10;
         }
 
         .hero-content {
-            max-width: 650px;
-            z-index: 2;
+            max-width: 680px;
+            text-align: left;
         }
 
         .hero-badge {
@@ -170,7 +215,7 @@
             align-items: center;
             gap: 8px;
             background: rgba(0, 255, 65, 0.1);
-            border: 1px solid rgba(0, 255, 65, 0.3);
+            border: 1px solid rgba(0, 255, 65, 0.35);
             color: var(--neon-green);
             padding: 6px 14px;
             border-radius: 50px;
@@ -178,26 +223,108 @@
             font-size: 0.75rem;
             font-weight: bold;
             margin-bottom: 1.5rem;
-            box-shadow: 0 0 10px rgba(0, 255, 65, 0.05);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .hero-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            animation: pulse-glow 1.5s infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 8px var(--neon-green); }
+            50% { transform: scale(1.2); opacity: 0.7; box-shadow: 0 0 15px var(--neon-green); }
         }
 
         .hero-title {
-            font-family: var(--font-display);
-            font-size: 4.2rem;
+            font-family: var(--font-sans);
+            font-size: 3.8rem;
             font-weight: 900;
             line-height: 1.05;
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--neon-green) 0%, var(--neon-cyan) 50%, var(--neon-purple) 100%);
+            color: #ffffff;
+            letter-spacing: -1px;
+        }
+        .hero-title span {
+            background: linear-gradient(135deg, var(--neon-accent) 0%, #00F0FF 50%, #FF00FF 100%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            transition: all 1s ease;
         }
 
         .hero-subtitle {
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: rgba(236, 240, 241, 0.7);
-            margin-bottom: 2.5rem;
+            margin-bottom: 2.2rem;
             line-height: 1.6;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Biome Selection row */
+        .biome-selector-label {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.5);
+            display: block;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .biome-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 2.2rem;
+            max-width: 580px;
+        }
+        .biome-card {
+            background: rgba(13, 17, 23, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .biome-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 4px;
+            border-top: 1px solid transparent;
+            border-left: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .biome-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(13, 17, 23, 0.6);
+        }
+        .biome-card.active {
+            background: rgba(13, 17, 23, 0.8);
+            box-shadow: inset 0 0 10px rgba(var(--neon-accent-rgb), 0.15);
+        }
+        .biome-card-icon {
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+        .biome-card-title {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+        .biome-card-desc {
+            font-size: 7.5px;
+            color: rgba(236, 240, 241, 0.4);
+            text-transform: uppercase;
+            margin-top: 2px;
         }
 
         .hero-buttons {
@@ -205,125 +332,331 @@
             gap: 20px;
         }
         .btn-primary {
-            background: var(--neon-cyan);
+            background: var(--neon-accent);
             color: var(--cyber-darker);
             border: none;
             padding: 14px 32px;
             border-radius: 12px;
-            font-weight: 700;
+            font-weight: 800;
             font-family: var(--font-mono);
-            font-size: 0.95rem;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 20px rgba(var(--neon-accent-rgb), 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(var(--neon-accent-rgb), 0.55);
         }
         .btn-secondary {
             background: transparent;
-            color: var(--neon-green);
-            border: 1px solid rgba(0, 255, 65, 0.4);
+            color: var(--neon-accent);
+            border: 1px solid rgba(var(--neon-accent-rgb), 0.4);
             padding: 14px 32px;
             border-radius: 12px;
-            font-weight: 700;
+            font-weight: 800;
             font-family: var(--font-mono);
-            font-size: 0.95rem;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .btn-secondary:hover {
-            background: rgba(0, 255, 65, 0.1);
-            transform: translateY(-3px);
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+            background: rgba(var(--neon-accent-rgb), 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(var(--neon-accent-rgb), 0.2);
         }
 
-        /* Oscilloscope Widget on Hero */
+        /* ===== HUD PANEL ===== */
         .hero-visual {
-            flex-1: 1;
-            max-width: 500px;
+            flex: 1;
+            max-width: 480px;
             width: 100%;
             z-index: 2;
         }
-        .hud-oscilloscope {
+        .glass-hud {
             background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 24px;
+            backdrop-filter: blur(25px);
+            border: 2px solid rgba(var(--neon-accent-rgb), 0.3);
+            border-radius: 28px;
             padding: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            box-shadow: inset 0 0 20px rgba(var(--neon-accent-rgb), 0.1), 0 0 30px rgba(0, 0, 0, 0.4);
             position: relative;
             overflow: hidden;
+            transition: border 1s ease, box-shadow 1s ease;
         }
-        .hud-oscilloscope::before {
-            content: '';
+        
+        /* HUD corner accents */
+        .hud-corner {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(13, 17, 23, 0) 50%, rgba(0, 240, 255, 0.05) 50%), linear-gradient(90deg, rgba(13, 17, 23, 0) 50%, rgba(0, 240, 255, 0.05) 50%);
-            background-size: 15px 15px;
-            pointer-events: none;
+            width: 16px;
+            height: 16px;
+            border-color: var(--neon-accent);
+            border-style: solid;
+            transition: border-color 1s ease;
         }
+        .hud-corner-tl { top: 0; left: 0; border-width: 2px 0 0 2px; }
+        .hud-corner-tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
+        .hud-corner-bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+        .hud-corner-br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+
         .hud-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-b: 1px solid rgba(0, 240, 255, 0.1);
+            border-b: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 12px;
             margin-bottom: 16px;
-        }
-        .hud-title {
             font-family: var(--font-mono);
-            font-size: 0.8rem;
-            color: var(--neon-cyan);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .hud-header-title {
             display: flex;
             align-items: center;
             gap: 8px;
+            color: var(--neon-accent);
+            transition: color 1s ease;
         }
-        .hud-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--neon-green);
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
+        .hud-header-status {
+            color: var(--neon-green);
         }
+
+        /* Tabs deck inside HUD */
+        .hud-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .hud-tab-btn {
+            background: rgba(5, 8, 16, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 8px;
+            color: rgba(255, 255, 255, 0.4);
+            font-family: var(--font-mono);
+            font-size: 8.5px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        .hud-tab-btn.active {
+            border-color: rgba(var(--neon-accent-rgb), 0.5);
+            background: rgba(var(--neon-accent-rgb), 0.1);
+            color: var(--neon-accent);
+            box-shadow: 0 0 10px rgba(var(--neon-accent-rgb), 0.1);
+        }
+
+        .hud-content-pane {
+            display: none;
+        }
+        .hud-content-pane.active {
+            display: block;
+        }
+
         .oscilloscope-canvas {
             width: 100%;
             height: 150px;
             display: block;
-            border-radius: 8px;
-            background: rgba(5, 8, 16, 0.6);
+            border-radius: 12px;
+            background: rgba(5, 8, 16, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 16px;
         }
 
-        /* ===== FEATURES SECTION ===== */
+        /* Synth controls row styling */
+        .synth-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .synth-slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .synth-slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+        }
+        .synth-slider-group input[type="range"] {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+            accent-color: var(--neon-accent);
+        }
+        .wave-select-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .wave-btn {
+            background: rgba(5, 8, 16, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 6px;
+            color: rgba(255, 255, 255, 0.5);
+            font-family: var(--font-mono);
+            font-size: 7.5px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .wave-btn.active {
+            border-color: var(--neon-accent);
+            background: rgba(var(--neon-accent-rgb), 0.15);
+            color: var(--neon-accent);
+        }
+        .synth-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .synth-action-btn {
+            background: rgba(5, 8, 16, 0.7);
+            border: 1px solid rgba(var(--neon-accent-rgb), 0.3);
+            border-radius: 10px;
+            padding: 10px;
+            color: #ffffff;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+        .synth-action-btn:hover {
+            border-color: var(--neon-accent);
+            transform: scale(1.02);
+        }
+        .synth-action-btn.active {
+            background: rgba(255, 0, 255, 0.2);
+            border-color: var(--neon-purple);
+            color: var(--neon-purple);
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.15);
+        }
+
+        /* Sound Alert Banner */
+        .sound-banner {
+            background: rgba(13, 17, 23, 0.85);
+            border: 1px solid rgba(var(--neon-accent-rgb), 0.4);
+            border-radius: 12px;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: calc(100% - 32px);
+            max-width: 380px;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .sound-banner-btn {
+            background: rgba(var(--neon-accent-rgb), 0.2);
+            border: 1px solid var(--neon-accent);
+            color: var(--neon-accent);
+            border-radius: 6px;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .sound-banner-btn:hover {
+            background: var(--neon-accent);
+            color: var(--cyber-darker);
+        }
+
+        /* EEG Channel tabs */
+        .eeg-channels {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+        .eeg-chan-btn {
+            background: rgba(5, 8, 16, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 8px;
+            color: rgba(255, 255, 255, 0.4);
+            font-family: var(--font-mono);
+            font-size: 7.5px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .eeg-chan-btn.active {
+            border-color: var(--neon-accent);
+            background: rgba(var(--neon-accent-rgb), 0.15);
+            color: var(--neon-accent);
+        }
+        .eeg-stats {
+            background: rgba(5, 8, 16, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            text-transform: uppercase;
+        }
+
+        /* ===== FEATURES GRID SECTION ===== */
         .section-header {
             text-align: center;
             margin-bottom: 4rem;
             position: relative;
         }
         .section-title {
-            font-family: var(--font-display);
-            font-size: 2.8rem;
+            font-family: var(--font-sans);
+            font-size: 2.5rem;
             font-weight: 900;
             background: linear-gradient(to right, var(--neon-green), var(--neon-cyan));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             text-transform: uppercase;
+            letter-spacing: 2px;
         }
         .section-subtitle {
-            color: rgba(236, 240, 241, 0.5);
+            color: rgba(236, 240, 241, 0.4);
             font-family: var(--font-mono);
-            font-size: 0.9rem;
-            margin-top: 5px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .features {
             padding: 100px 8%;
             position: relative;
+            z-index: 10;
         }
 
         .features-grid {
@@ -334,8 +667,8 @@
 
         .feature-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(236, 240, 241, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 20px;
             padding: 32px;
             transition: all 0.3s ease;
@@ -343,9 +676,9 @@
             overflow: hidden;
         }
         .feature-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--neon-cyan);
-            box-shadow: 0 8px 30px rgba(0, 240, 255, 0.15);
+            transform: translateY(-5px);
+            border-color: rgba(var(--neon-accent-rgb), 0.5);
+            box-shadow: 0 8px 30px rgba(var(--neon-accent-rgb), 0.12);
         }
         /* Scanline effect */
         .feature-card::before {
@@ -355,8 +688,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(rgba(0, 240, 255, 0) 90%, rgba(0, 240, 255, 0.15) 100%);
-            animation: scan 6s linear infinite;
+            background: linear-gradient(rgba(var(--neon-accent-rgb), 0) 90%, rgba(var(--neon-accent-rgb), 0.1) 100%);
+            animation: scan 8s linear infinite;
         }
         @keyframes scan {
             0% { top: -100%; }
@@ -364,99 +697,372 @@
         }
 
         .feature-icon {
-            width: 60px;
-            height: 60px;
-            background: rgba(0, 240, 255, 0.1);
+            width: 52px;
+            height: 52px;
+            background: rgba(var(--neon-accent-rgb), 0.1);
             border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
-            color: var(--neon-cyan);
+            font-size: 1.5rem;
+            color: var(--neon-accent);
             margin-bottom: 24px;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 15px rgba(var(--neon-accent-rgb), 0.1);
+            border: 1px solid rgba(var(--neon-accent-rgb), 0.2);
+            transition: border 1s ease, color 1s ease;
         }
 
         .feature-card h3 {
-            font-family: var(--font-display);
-            font-size: 1.3rem;
+            font-family: var(--font-sans);
+            font-size: 1.15rem;
+            font-weight: 800;
             margin-bottom: 12px;
             color: #ffffff;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
         .feature-card p {
             color: rgba(236, 240, 241, 0.6);
             line-height: 1.6;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
+        }
+
+        /* ===== LIVE DIAGNOSTIC LAB DIALS SECTION ===== */
+        .lab-dials-section {
+            padding: 80px 8%;
+            z-index: 10;
+            position: relative;
+        }
+        .dials-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .dial-card {
+            background: var(--glass-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .dial-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .dial-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+        .rppg-canvas-container {
+            background: rgba(5, 8, 16, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 16px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 16px;
+        }
+        .rppg-canvas {
+            width: 100%;
+            height: 850px;
+            max-height: 80px;
+            display: block;
+        }
+        .dial-stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .dial-stat-box {
+            background: rgba(5, 8, 16, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+        .dial-stat-label {
+            font-family: var(--font-mono);
+            font-size: 7.5px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+        }
+        .dial-stat-val {
+            font-family: var(--font-mono);
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 4px;
+        }
+
+        /* BCI Attentiveness bars */
+        .bci-progress-stack {
+            background: rgba(5, 8, 16, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .bci-progress-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .bci-progress-meta {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+        }
+        .bci-bar-bg {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .bci-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .bci-footer-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .bci-footer-box {
+            background: rgba(5, 8, 16, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-mono);
+            font-size: 8.5px;
+            text-transform: uppercase;
         }
 
         /* ===== INTERACTIVE CONSOLE DECK ===== */
         .console-section {
             padding: 100px 8%;
             background: rgba(5, 8, 16, 0.4);
-            border-y: 1px solid rgba(0, 240, 255, 0.1);
-        }
-
-        .console-container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(0, 255, 65, 0.2);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 10px 40px rgba(0, 255, 65, 0.05);
+            border-y: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 10;
             position: relative;
         }
 
-        /* HUD brackets */
-        .bracket {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border-color: var(--neon-green);
-            border-style: solid;
+        .console-container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border: 2px solid rgba(0, 240, 255, 0.3);
+            border-radius: 28px;
+            padding: 40px;
+            box-shadow: 0 10px 45px rgba(0, 0, 0, 0.5);
+            position: relative;
         }
-        .bracket-tl { top: 15px; left: 15px; border-width: 2px 0 0 2px; }
-        .bracket-tr { top: 15px; right: 15px; border-width: 2px 2px 0 0; }
-        .bracket-bl { bottom: 15px; left: 15px; border-width: 0 0 2px 2px; }
-        .bracket-br { bottom: 15px; right: 15px; border-width: 0 2px 2px 0; }
-
-        .console-body {
+        
+        .console-output-box {
+            background: rgba(5, 8, 16, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            height: 220px;
             font-family: var(--font-mono);
-            text-align: left;
+            font-size: 10.5px;
+            line-height: 1.5;
+            color: var(--neon-cyan);
+            margin-bottom: 20px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            position: relative;
+        }
+        .console-output-box::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(rgba(0, 240, 255, 0.01) 50%, transparent 50%);
+            background-size: 100% 12px;
         }
 
-        .console-text {
-            color: var(--neon-green);
+        .console-cli-form {
+            display: flex;
+            gap: 12px;
             margin-bottom: 24px;
-            font-size: 0.9rem;
-            line-height: 1.5;
+        }
+        .console-input-group {
+            background: rgba(5, 8, 16, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-grow: 1;
+            transition: border 0.3s ease;
+        }
+        .console-input-group:focus-within {
+            border-color: var(--neon-cyan);
+        }
+        .console-prompt {
+            font-family: var(--font-mono);
+            font-size: 10.5px;
+            color: var(--neon-cyan);
+        }
+        .console-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #ffffff;
+            font-family: var(--font-mono);
+            font-size: 10.5px;
+            flex-grow: 1;
+            text-transform: uppercase;
+        }
+        .console-submit {
+            background: rgba(0, 240, 255, 0.15);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            color: var(--neon-cyan);
+            border-radius: 12px;
+            padding: 0 24px;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .console-submit:hover {
+            background: var(--neon-cyan);
+            color: var(--cyber-darker);
+            box-shadow: 0 0 15px var(--neon-cyan);
         }
 
         .console-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-top: 32px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 30px;
         }
         .console-btn {
-            background: rgba(13, 17, 23, 0.8);
-            border: 1px solid rgba(0, 255, 65, 0.3);
+            background: rgba(5, 8, 16, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 12px;
-            padding: 16px;
-            color: var(--neon-green);
+            padding: 14px;
+            color: rgba(255, 255, 255, 0.7);
             font-family: var(--font-mono);
-            font-size: 0.8rem;
+            font-size: 8.5px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .console-btn:hover {
-            background: rgba(0, 255, 65, 0.15);
-            border-color: var(--neon-green);
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
-            transform: scale(1.02);
+            background: rgba(var(--neon-accent-rgb), 0.1);
+            border-color: var(--neon-accent);
+            box-shadow: 0 0 15px rgba(var(--neon-accent-rgb), 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Microservices Matrix inside Console Deck */
+        .services-matrix-border {
+            border-t: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 24px;
+        }
+        .services-matrix-label {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        .service-node {
+            background: rgba(5, 8, 16, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .service-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .service-icon-box {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+        }
+        .service-name {
+            font-family: var(--font-sans);
+            font-size: 9.5px;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+        .service-port {
+            font-family: var(--font-mono);
+            font-size: 7.5px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 2px;
+        }
+        .service-ping {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .service-indicator {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            animation: pulse-glow 1.5s infinite;
         }
 
         /* ===== BIOMETRIC CTA ===== */
@@ -464,53 +1070,71 @@
             padding: 120px 8%;
             text-align: center;
             position: relative;
+            z-index: 10;
         }
         .cta-box {
-            max-width: 800px;
+            max-width: 850px;
             margin: 0 auto;
-            background: linear-gradient(135deg, rgba(0, 240, 255, 0.05), rgba(255, 0, 255, 0.05));
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.04), rgba(255, 0, 255, 0.04));
             border: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 30px;
+            border-radius: 32px;
             padding: 60px 40px;
             backdrop-filter: blur(15px);
-            box-shadow: 0 10px 45px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 45px rgba(0, 0, 0, 0.5);
+            position: relative;
         }
         .cta h2 {
-            font-family: var(--font-display);
-            font-size: 3rem;
+            font-family: var(--font-sans);
+            font-size: 2.8rem;
             font-weight: 900;
             margin-bottom: 16px;
-            background: linear-gradient(to right, var(--neon-cyan), var(--neon-purple));
+            background: linear-gradient(to right, var(--neon-cyan), var(--neon-green));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .cta p {
             color: rgba(236, 240, 241, 0.6);
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             max-width: 600px;
             margin: 0 auto 40px;
             line-height: 1.6;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         /* ===== FOOTER ===== */
         footer {
             background: var(--cyber-darker);
-            padding: 60px 8% 30px;
-            border-t: 1px solid rgba(0, 240, 255, 0.1);
+            padding: 80px 8% 40px;
+            border-t: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            z-index: 10;
         }
         .footer-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 40px;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
         }
         .footer-col h4 {
-            font-family: var(--font-display);
-            font-size: 0.95rem;
+            font-family: var(--font-sans);
+            font-size: 9px;
+            font-weight: 800;
             color: #ffffff;
             margin-bottom: 20px;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .footer-col p {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.35);
+            text-transform: uppercase;
+            line-height: 1.5;
         }
         .footer-col ul {
             list-style: none;
@@ -521,12 +1145,14 @@
         .footer-col ul li a {
             color: rgba(236, 240, 241, 0.5);
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 9px;
+            font-family: var(--font-mono);
             transition: all 0.3s ease;
+            text-transform: uppercase;
         }
         .footer-col ul li a:hover {
-            color: var(--neon-cyan);
-            padding-left: 5px;
+            color: var(--neon-accent);
+            padding-left: 4px;
         }
         .footer-bottom {
             border-t: 1px solid rgba(255, 255, 255, 0.05);
@@ -539,17 +1165,18 @@
         }
         .copyright {
             font-family: var(--font-mono);
-            font-size: 0.8rem;
-            color: rgba(236, 240, 241, 0.4);
+            font-size: 8px;
+            color: rgba(236, 240, 241, 0.3);
+            text-transform: uppercase;
         }
         .socials {
             display: flex;
             gap: 15px;
         }
         .socials a {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
@@ -560,79 +1187,224 @@
             transition: all 0.3s ease;
         }
         .socials a:hover {
-            background: var(--neon-cyan);
+            background: var(--neon-accent);
             color: var(--cyber-darker);
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 15px var(--neon-cyan);
+            border-color: var(--neon-accent);
+            box-shadow: 0 0 15px var(--neon-accent);
             transform: translateY(-3px);
         }
 
         /* ===== RESPONSIVE ===== */
-        @media (max-width: 968px) {
+        @media (max-width: 1100px) {
             .hero {
                 flex-direction: column;
                 text-align: center;
-                padding-top: 120px;
+                padding-top: 130px;
                 justify-content: center;
+                gap: 50px;
             }
             .hero-badge {
                 justify-content: center;
             }
             .hero-title {
-                font-size: 3.2rem;
+                font-size: 3rem;
             }
             .hero-buttons {
                 justify-content: center;
             }
             .nav-links {
-                display: none; /* In production, implement burger menu */
+                display: none;
+            }
+            .biome-grid {
+                margin: 0 auto 2.2rem;
+            }
+            .dials-grid {
+                grid-template-columns: 1fr;
+            }
+            .services-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .console-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 600px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            .console-grid {
+                grid-template-columns: 1fr;
+            }
+            .biome-grid {
+                grid-template-columns: 1fr 1fr;
             }
         }
     </style>
 </head>
 <body>
 
+    <!-- Canvas Particle Background -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Cyber grid overlay -->
+    <div class="grid-overlay"></div>
+
+    <!-- Atmospheric Gradient Blobs -->
+    <div class="blob-container">
+        <div class="blob blob-1" id="blob-gradient-1"></div>
+        <div class="blob blob-2" id="blob-gradient-2"></div>
+    </div>
+
+    <!-- Sound Alert Banner overlay -->
+    <div class="sound-banner" id="sound-alert-banner">
+        <span>SOUND MODULE READY // INITIAL RESUME REQUIRED</span>
+        <button class="sound-banner-btn" onclick="resumeSoundEngine()">ACTIVATE AUDIO</button>
+    </div>
+
     <!-- NAVIGATION HEADER -->
     <header>
         <div class="logo">
-            <i class="fa-solid fa-seedling logo-icon"></i>
-            FARMQUEST<span>.NEXUS</span>
+            🌾 FARMQUEST<span id="logo-span">.NEXUS</span>
+            <span class="logo-tag" id="logo-version-tag">OS v3.0</span>
         </div>
         <ul class="nav-links">
-            <li><a href="#features">FEATURES</a></li>
-            <li><a href="#quantum">CORE SYSTEM</a></li>
-            <li><a href="#certify">BLOCKCHAIN</a></li>
+            <li><a href="#features" onclick="Sound.tick()">Operational Subsystems</a></li>
+            <li><a href="#quantum" onclick="Sound.tick()">Command Deck</a></li>
+            <li><a href="#" onclick="Sound.tick(); navigateTo('/dashboard')">Enter Dashboard</a></li>
         </ul>
-        <button class="btn-connect" onclick="navigateTo('/auth/login')">ENGAGE CORE</button>
+        <button class="btn-connect" onclick="Sound.tick(); navigateTo('/auth/login')">ENGAGE OS GATEWAY</button>
     </header>
 
     <!-- HERO SECTION -->
     <section class="hero">
         <div class="hero-content">
             <div class="hero-badge">
-                <div class="hud-dot"></div>
-                SYSTEM HEALTH: OPTIMAL (v2.0)
+                <div class="hero-dot"></div>
+                SYSTEM CORE STATUS: OPTIMAL & CONNECTED
             </div>
-            <h1 class="hero-title">NEXT-GEN SOLAR-PUNK AGRICULTURE</h1>
+            <h1 class="hero-title">NEXT-GEN <br><span>SOLARPUNK AGRI OS</span></h1>
             <p class="hero-subtitle">
-                Overhaul your farming universe with Three.js Spatial Twins, raw EEG Brain-Computer Interfaces, optical biometric rPPG stress scans, and CRISPR genomic certifications locked on a Proof-of-Stake green ledger.
+                Overhaul your farming universe with Three.js Spatial Twins, real-time EEG brain-computer interfaces, camera-captured rPPG heart monitors, and CRISPR alignments secured on the Solana blockchain.
             </p>
+
+            <!-- Biome Selector Deck -->
+            <label class="biome-selector-label">SELECT ACTIVE COGNITIVE AGRICULTURAL BIOME:</label>
+            <div class="biome-grid">
+                <div class="biome-card active" id="biome-algae" onclick="selectBiome('algae')">
+                    <div class="biome-card-icon">🌿</div>
+                    <div class="biome-card-title">Algae</div>
+                    <div class="biome-card-desc">Reactor</div>
+                </div>
+                <div class="biome-card" id="biome-hydro" onclick="selectBiome('hydro')">
+                    <div class="biome-card-icon">💧</div>
+                    <div class="biome-card-title">Hydro</div>
+                    <div class="biome-card-desc">Deck</div>
+                </div>
+                <div class="biome-card" id="biome-crispr" onclick="selectBiome('crispr')">
+                    <div class="biome-card-icon">🧬</div>
+                    <div class="biome-card-title">CRISPR</div>
+                    <div class="biome-card-desc">Genome</div>
+                </div>
+                <div class="biome-card" id="biome-ledger" onclick="selectBiome('ledger')">
+                    <div class="biome-card-icon">🪙</div>
+                    <div class="biome-card-title">Ledger</div>
+                    <div class="biome-card-desc">SPL Token</div>
+                </div>
+            </div>
+
             <div class="hero-buttons">
-                <button class="btn-primary" onclick="navigateTo('/auth/login')">ENGAGE PORTAL</button>
-                <button class="btn-secondary" onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})">METRICS DECK</button>
+                <button class="btn-primary" onclick="Sound.success(); navigateTo('/auth/login')">ENGAGE DECK PORTAL</button>
+                <button class="btn-secondary" onclick="Sound.tick(); document.getElementById('quantum').scrollIntoView({behavior: 'smooth'})">OS CORE TERMINAL</button>
             </div>
         </div>
 
-        <!-- Oscillosope live render widget on hero -->
+        <!-- Right Side: Live Oscilloscope & Synth modular card -->
         <div class="hero-visual">
-            <div class="hud-oscilloscope">
+            <div class="glass-hud" id="hud-frame">
+                <div class="hud-corner hud-corner-tl"></div>
+                <div class="hud-corner hud-corner-tr"></div>
+                <div class="hud-corner hud-corner-bl"></div>
+                <div class="hud-corner hud-corner-br"></div>
+
                 <div class="hud-header">
-                    <span class="hud-title">
+                    <span class="hud-header-title" id="hud-title-text">
                         <i class="fa-solid fa-wave-square"></i> EEG BRAIN FEED MONITOR
                     </span>
-                    <span class="hud-title" style="color: var(--neon-cyan)">ACTIVE SYNCING</span>
+                    <span class="hud-header-status">ACTIVE DECK</span>
                 </div>
-                <canvas id="oscilloscope" class="oscilloscope-canvas" width="400" height="150"></canvas>
+
+                <!-- Tab controllers -->
+                <div class="hud-tabs">
+                    <button class="hud-tab-btn active" id="tab-btn-eeg" onclick="switchHudTab('eeg')">EEG OSCILLOSCOPE</button>
+                    <button class="hud-tab-btn" id="tab-btn-synth" onclick="switchHudTab('synth')">AUDIO SYNTH CORE</button>
+                </div>
+
+                <!-- Tab 1: EEG Oscilloscope content -->
+                <div class="hud-content-pane active" id="pane-eeg">
+                    <canvas id="oscilloscope" class="oscilloscope-canvas" width="400" height="150"></canvas>
+                    
+                    <div class="eeg-channels">
+                        <button class="eeg-chan-btn active" id="chan-alpha" onclick="selectEegChannel('alpha')">alpha</button>
+                        <button class="eeg-chan-btn" id="chan-beta" onclick="selectEegChannel('beta')">beta</button>
+                        <button class="eeg-chan-btn" id="chan-gamma" onclick="selectEegChannel('gamma')">gamma</button>
+                        <button class="eeg-chan-btn" id="chan-theta" onclick="selectEegChannel('theta')">theta</button>
+                    </div>
+
+                    <div class="eeg-stats">
+                        <div>
+                          <span style="opacity: 0.4; font-size: 7.5px; block">FEED SOURCE</span>
+                          <div style="font-weight: 700; margin-top: 2px;" id="eeg-active-title">Alpha Focus</div>
+                        </div>
+                        <div style="text-align: right">
+                          <span style="opacity: 0.4; font-size: 7.5px; block">FEED INDEX</span>
+                          <div style="font-weight: 700; color: var(--neon-green); margin-top: 2px;">84% STABLE</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Audio Synth core content -->
+                <div class="hud-content-pane" id="pane-synth">
+                    <div style="background: rgba(5, 8, 16, 0.7); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 12px; margin-bottom: 12px; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
+                        <span style="position: absolute; top: 6px; left: 8px; font-family: var(--font-mono); font-size: 7px; color: rgba(255, 255, 255, 0.35)">SYNTH OSCILLOSCOPE MONITOR</span>
+                        <canvas id="synth-oscilloscope" class="oscilloscope-canvas" style="height: 60px; border: none; background: transparent; margin: 0; width: 100%;" width="400" height="60"></canvas>
+                        <span style="font-family: var(--font-mono); font-size: 7.5px; color: rgba(255,255,255,0.4); margin-top: 4px;" id="synth-wave-readout">WAVEFORM: TRIANGLE @ 440HZ</span>
+                    </div>
+
+                    <div class="synth-controls">
+                        <div class="synth-slider-group">
+                            <div class="synth-slider-label">
+                                <span>OSCILLATOR FREQUENCY</span>
+                                <span id="freq-val" style="font-weight:700">440 HZ</span>
+                            </div>
+                            <input type="range" min="220" max="1200" step="10" value="440" id="freq-slider" oninput="updateSynthFreq(this.value)">
+                        </div>
+
+                        <div class="synth-slider-group">
+                            <div class="synth-slider-label">
+                                <span>SYNTH VOL GAIN</span>
+                                <span id="vol-val" style="font-weight:700">15%</span>
+                            </div>
+                            <input type="range" min="0" max="0.8" step="0.05" value="0.15" id="vol-slider" oninput="updateSynthVol(this.value)">
+                        </div>
+
+                        <div class="wave-select-grid">
+                            <button class="wave-btn" id="wave-sine" onclick="selectWaveform('sine')">sine</button>
+                            <button class="wave-btn active" id="wave-triangle" onclick="selectWaveform('triangle')">triangle</button>
+                            <button class="wave-btn" id="wave-sawtooth" onclick="selectWaveform('sawtooth')">saw</button>
+                            <button class="wave-btn" id="wave-square" onclick="selectWaveform('square')">square</button>
+                        </div>
+
+                        <div class="synth-actions">
+                            <button class="synth-action-btn" onclick="playCustomPulse()">
+                                <i class="fa-solid fa-sparkles"></i> TEST PULSE
+                            </button>
+                            <button class="synth-action-btn" id="drone-toggle-btn" onclick="toggleDroneLoop()">
+                                <i class="fa-solid fa-music"></i> AMB-DRONE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
@@ -640,51 +1412,151 @@
     <!-- FEATURES GRID SECTION -->
     <section id="features" class="features">
         <div class="section-header">
-            <h2 class="section-title">HYPER-DIMENSIONAL DEEP TECH</h2>
+            <h2 class="section-title">HYPER-DIMENSIONAL DEEP OS TECH</h2>
             <p class="section-subtitle">>> Decoupling standard agricultural practices from legacy constraints</p>
         </div>
 
         <div class="features-grid">
             <!-- Spatial Twin -->
             <div class="feature-card">
-                <div class="feature-icon"><i class="fa-solid fa-cube"></i></div>
+                <div class="feature-icon" id="icon-twin"><i class="fa-solid fa-cube"></i></div>
                 <h3>3D WebXR Spatial Twins</h3>
-                <p>Topographical Three.js rendering maps microclimatic field layers. Custom fragment GLSL shaders visualize real-time glowing soil moisture, pH, and nitrogen matrices.</p>
+                <p>Topographical Three.js rendering maps microclimatic field layers. Custom fragment GLSL shaders visualize soil moisture, pH, and nitrogen matrices in real-time.</p>
             </div>
 
             <!-- BCI -->
             <div class="feature-card">
-                <div class="feature-icon"><i class="fa-solid fa-brain"></i></div>
+                <div class="feature-icon" id="icon-bci"><i class="fa-solid fa-brain"></i></div>
                 <h3>Passive BCI EEG Controls</h3>
-                <p>Hands-free robotic command deck integrating raw Electroencephalography. Custom GATT Web Bluetooth services map attention, stress, and eye confirm signals directly to machinery.</p>
+                <p>Hands-free robotic command deck integrating raw Electroencephalography. Custom GATT Web Bluetooth services map attention and eye confirm signals directly to robotics.</p>
             </div>
 
             <!-- rPPG -->
             <div class="feature-card">
-                <div class="feature-icon"><i class="fa-solid fa-heart"></i></div>
+                <div class="feature-icon" id="icon-rppg"><i class="fa-solid fa-heart"></i></div>
                 <h3>Optical rPPG Video Pulse</h3>
-                <p>Cardiovascular photoplethysmography tracks subtle skin color variances on the green absorption channel. Dynamic HRV indexing triggers cognitive safety limiters.</p>
+                <p>Cardiovascular photoplethysmography tracks subtle skin color variances on camera-captured absorption channels. Dynamic HRV indexing triggers autopilot safety enclaves.</p>
             </div>
 
-            <!-- CRISPR -->
+            <!-- CRISPR PCR -->
             <div class="feature-card">
-                <div class="feature-icon"><i class="fa-solid fa-dna"></i></div>
-                <h3>CRISPR & Pathogen PCR</h3>
-                <p>Bioinformatics engine aligning field DNA bioprobes against pathogen databases using Levenshtein distance vectors. Integrates Cas12/Cas13 collateral cleavage diagnostics.</p>
+                <div class="feature-icon" id="icon-crispr"><i class="fa-solid fa-dna"></i></div>
+                <h3>CRISPR & PCR Alignments</h3>
+                <p>Bioinformatics engine aligning field DNA bioprobes against pathogen databases using Needleman-Wunsch alignments. Integrates Cas12/Cas13 collateral cleavage diagnostics.</p>
             </div>
 
-            <!-- Blockchain -->
+            <!-- Solana SPL Carbon Ledger -->
             <div class="feature-card">
-                <div class="feature-icon"><i class="fa-solid fa-link"></i></div>
-                <h3>Proof-of-Regenerative Practice</h3>
-                <p>Tamper-proof certifications locking soil sequestration logs on Solana/Algorand carbon contracts, automatically minting eco-friendly FarmToken assets.</p>
+                <div class="feature-icon" id="icon-ledger"><i class="fa-solid fa-link"></i></div>
+                <h3>Solana Carbon Credits</h3>
+                <p>Tamper-proof certifications locking soil sequestration logs on Solana carbon contracts, automatically minting SPL tokens with quantum-safe Dilithium keys.</p>
             </div>
 
             <!-- Zero Trust -->
             <div class="feature-card">
-                <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
-                <h3>Unbreachable Zero-Trust</h3>
-                <p>OAuth2.0 WebAuthn biometric passkeys verify identities at the gateway. Mutual TLS 1.3 SPIFFE/SPIRE certificates enforce strict service isolation.</p>
+                <div class="feature-icon" id="icon-security"><i class="fa-solid fa-shield-halved"></i></div>
+                <h3>Unbreachable WebAuthn</h3>
+                <p>OAuth2.0 WebAuthn biometric passkeys verify identities at the gateway. SPIRE-managed mutual TLS 1.3 certificates enforce strict microservice enclave isolation.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- LIVE DIAGNOSTIC LAB DIALS SECTION -->
+    <section class="lab-dials-section">
+        <div class="section-header">
+            <h2 class="section-title">LIVE COGNITIVE LAB DIALS</h2>
+            <p class="section-subtitle">>> Monitoring biophysical readouts & biometrics feedstream telemetry</p>
+        </div>
+
+        <div class="dials-grid">
+            <!-- Card 1: Cardiovascular rPPG Heart telemetry -->
+            <div class="dial-card">
+                <div class="dial-card-header">
+                    <span class="dial-title" style="color: var(--neon-pink)">
+                        <i class="fa-solid fa-heart-pulse animate-pulse"></i> rPPG OPTICAL VASCULAR FEEDS
+                    </span>
+                    <span style="color: var(--neon-green)">CAMERA ACTIVE</span>
+                </div>
+
+                <div class="rppg-canvas-container">
+                    <canvas id="rppg-canvas" class="rppg-canvas" width="400" height="80"></canvas>
+                    <span style="position: absolute; bottom: 6px; left: 8px; font-family: var(--font-mono); font-size: 7px; color: rgba(255, 255, 255, 0.3)">PHOTOPLETHYSMOGRAM DETECTING SKIN ABSORPTION MATRIX</span>
+                </div>
+
+                <div class="dial-stats-row">
+                    <div class="dial-stat-box">
+                        <div class="dial-stat-label">PULSE RATE</div>
+                        <div class="dial-stat-val" style="color: var(--neon-pink)">72 <span style="font-size: 9px; opacity: 0.5">BPM</span></div>
+                    </div>
+                    <div class="dial-stat-box">
+                        <div class="dial-stat-label">HRV INDEX</div>
+                        <div class="dial-stat-val">68 <span style="font-size: 9px; opacity: 0.5">ms</span></div>
+                    </div>
+                    <div class="dial-stat-box">
+                        <div class="dial-stat-label">HR CONFIDENCE</div>
+                        <div class="dial-stat-val" style="color: var(--neon-green)">99.4%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Neural BCI attention metrics -->
+            <div class="dial-card">
+                <div class="dial-card-header">
+                    <span class="dial-title" style="color: var(--neon-cyan)">
+                        <i class="fa-solid fa-brain"></i> BCI ATTENTION GAUGES
+                    </span>
+                    <span style="color: var(--neon-cyan)">BLUETOOTH LINKED</span>
+                </div>
+
+                <div class="bci-progress-stack">
+                    <div class="bci-progress-row">
+                        <div class="bci-progress-meta">
+                            <span>ALPHA (RELAXATION)</span>
+                            <span style="color: var(--neon-cyan)">84%</span>
+                        </div>
+                        <div class="bci-bar-bg">
+                            <div class="bci-bar-fill" style="width: 84%; background: var(--neon-cyan); box-shadow: 0 0 8px var(--neon-cyan)"></div>
+                        </div>
+                    </div>
+
+                    <div class="bci-progress-row">
+                        <div class="bci-progress-meta">
+                            <span>BETA (ACTIVE FOCUS)</span>
+                            <span style="color: var(--neon-green)">65%</span>
+                        </div>
+                        <div class="bci-bar-bg">
+                            <div class="bci-bar-fill" style="width: 65%; background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green)"></div>
+                        </div>
+                    </div>
+
+                    <div class="bci-progress-row">
+                        <div class="bci-progress-meta">
+                            <span>GAMMA (HIGH COGNITION)</span>
+                            <span style="color: var(--neon-purple)">42%</span>
+                        </div>
+                        <div class="bci-bar-bg">
+                            <div class="bci-bar-fill" style="width: 42%; background: var(--neon-purple); box-shadow: 0 0 8px var(--neon-purple)"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bci-footer-row">
+                    <div class="bci-footer-box">
+                        <div>
+                            <span style="font-size: 7px; opacity: 0.5; display: block">EYE BLINK OVERRIDE</span>
+                            <span style="font-weight: 700; color: #ffffff">READY TO DETECT</span>
+                        </div>
+                        <span class="hud-dot"></span>
+                    </div>
+
+                    <div class="bci-footer-box">
+                        <div>
+                            <span style="font-size: 7px; opacity: 0.5; display: block">COGNITIVE SAFEGUARD</span>
+                            <span style="font-weight: 700; color: var(--neon-green)">ENGAGED</span>
+                        </div>
+                        <i class="fa-solid fa-shield-halved text-neon-green animate-pulse" style="font-size: 11px; color: var(--neon-green)"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -692,24 +1564,106 @@
     <!-- INTERACTIVE CONSOLE DECK -->
     <section id="quantum" class="console-section">
         <div class="section-header">
-            <h2 class="section-title">NEXUS COMMAND DECK</h2>
-            <p class="section-subtitle">>> Interact directly with the local farm system node</p>
+            <h2 class="section-title">OS COMMAND DECK TERMINAL</h2>
+            <p class="section-subtitle">>> CHALLENGE AND EXPOSE COGNITIVE CHANNELS DIRECTLY OVER LOCAL Microservices</p>
         </div>
 
         <div class="console-container">
-            <div class="bracket bracket-tl"></div>
-            <div class="bracket bracket-tr"></div>
-            <div class="bracket bracket-bl"></div>
-            <div class="bracket bracket-br"></div>
+            <div class="hud-corner hud-corner-tl" style="border-color: var(--neon-cyan)"></div>
+            <div class="hud-corner hud-corner-tr" style="border-color: var(--neon-cyan)"></div>
+            <div class="hud-corner hud-corner-bl" style="border-color: var(--neon-cyan)"></div>
+            <div class="hud-corner hud-corner-br" style="border-color: var(--neon-cyan)"></div>
 
             <div class="console-body">
-                <div class="console-text" id="consoleOutput">
-                    SYSTEM STATUS: READY // SELECT OPERATIONAL ACTION VECTOR...
-                </div>
+                <!-- CLI output text screen -->
+                <div class="console-output-box" id="consoleOutput">FARMQUEST COGNITIVE OS v3.0 [BOOT SEQUENCE SECURE]
+------------------------------------------------------------
+>> CHIP-SET ALLOCATIONS VERIFIED (SPIRE mTLS 1.3 ACTIVE)
+>> FOUR BIOME HUDS DISPATCHED TO DECK CONSOLE
+------------------------------------------------------------
+TYPE /help IN THE SYSTEM PROMPT BELOW FOR CORE PROTOCOLS.</div>
+                
+                <!-- CLI text input form -->
+                <form class="console-cli-form" id="console-form" onsubmit="handleCliSubmit(event)">
+                    <div class="console-input-group">
+                        <span class="console-prompt">[SYSTEM@FARMQUEST] &gt;</span>
+                        <input type="text" class="console-input" id="cli-input" placeholder="type /help or commands like /scan, /status, /solana, /audio..." autocomplete="off">
+                    </div>
+                    <button type="submit" class="console-submit">
+                        COMPILE <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <!-- Macro buttons -->
                 <div class="console-grid">
-                    <button class="console-btn" onclick="executeConsole('ALGAE_BIOMASS')">🌿 OPTIMIZE ALGAE BIOMASS</button>
-                    <button class="console-btn" onclick="executeConsole('HAPTIC_OVERRIDE')">🛸 DISPATCH DRONE FLEET</button>
-                    <button class="console-btn" onclick="executeConsole('LEDGER_AUDIT')">🔗 AUDIT CARBON CREDITS</button>
+                    <button class="console-btn" style="color: var(--neon-green); border-color: rgba(0,255,65,0.2)" onclick="runCliCommand('/biome algae')">🌿 OPTIMIZE ALGAE</button>
+                    <button class="console-btn" style="color: var(--neon-pink); border-color: rgba(255,0,107,0.2)" onclick="runCliCommand('/scan')">🔬 INITIATE PCR SCAN</button>
+                    <button class="console-btn" style="color: var(--neon-cyan); border-color: rgba(0,240,255,0.2)" onclick="runCliCommand('/solana')">🪙 Solana CREDITS MINT</button>
+                    <button class="console-btn" style="color: var(--neon-purple); border-color: rgba(255,0,255,0.2)" onclick="runCliCommand('/status')">🧬 EXPOSE SECURITY</button>
+                </div>
+
+                <!-- Microservices node monitor -->
+                <div class="services-matrix-border">
+                    <div class="services-matrix-label">ACTIVE MICROSERVICES NODE RACK MATRIX:</div>
+                    
+                    <div class="services-grid">
+                        <div class="service-node">
+                            <div class="service-meta">
+                                <div class="service-icon-box" style="color: var(--neon-green)">⚡</div>
+                                <div>
+                                    <div class="service-name">API GATEWAY</div>
+                                    <div class="service-port">PORT 3000 / REST</div>
+                                </div>
+                            </div>
+                            <div class="service-ping">
+                                <span class="service-indicator" style="background: var(--neon-green); box-shadow: 0 0 6px var(--neon-green)"></span>
+                                <span style="color: var(--neon-green)" id="ping-gateway">12ms</span>
+                            </div>
+                        </div>
+
+                        <div class="service-node">
+                            <div class="service-meta">
+                                <div class="service-icon-box" style="color: var(--neon-cyan)">📡</div>
+                                <div>
+                                    <div class="service-name">WEBMCP HUB</div>
+                                    <div class="service-port">PORT 3001 / MCP</div>
+                                </div>
+                            </div>
+                            <div class="service-ping">
+                                <span class="service-indicator" style="background: var(--neon-cyan); box-shadow: 0 0 6px var(--neon-cyan)"></span>
+                                <span style="color: var(--neon-cyan)" id="ping-mcp">18ms</span>
+                            </div>
+                        </div>
+
+                        <div class="service-node">
+                            <div class="service-meta">
+                                <div class="service-icon-box" style="color: var(--neon-pink)">🧬</div>
+                                <div>
+                                    <div class="service-name">BIOINF PCR</div>
+                                    <div class="service-port">PORT 3008 / PY</div>
+                                </div>
+                            </div>
+                            <div class="service-ping">
+                                <span class="service-indicator" style="background: var(--neon-green); box-shadow: 0 0 6px var(--neon-green)"></span>
+                                <span style="color: var(--neon-pink)" id="ping-crispr">28ms</span>
+                            </div>
+                        </div>
+
+                        <div class="service-node">
+                            <div class="service-meta">
+                                <div class="service-icon-box" style="color: var(--neon-purple)">🧠</div>
+                                <div>
+                                    <div class="service-name">LANGGRAPH RAG</div>
+                                    <div class="service-port">PORT 8000 / PY</div>
+                                </div>
+                            </div>
+                            <div class="service-ping">
+                                <span class="service-indicator" style="background: var(--neon-cyan); box-shadow: 0 0 6px var(--neon-cyan)"></span>
+                                <span style="color: var(--neon-purple)" id="ping-graph">52ms</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -718,9 +1672,11 @@
     <!-- BIOMETRIC CTA -->
     <section class="cta">
         <div class="cta-box">
-            <h2>ENGAGE NEURAL INTERFACE</h2>
+            <h2>ENGAGE NEURAL SECURITY PASSPORT</h2>
             <p>Access the unified dashboard, launch spatial twins, and sync your BCI receiver profile. Join the Solarpunk agriculture revolution today.</p>
-            <button class="btn-primary" onclick="navigateTo('/auth/login')">VERIFY SECURITY PASSKEY</button>
+            <button class="btn-primary" onclick="Sound.success(); navigateTo('/auth/login')">
+                VERIFY SECURITY BIOMETRICS <i class="fa-solid fa-lock" style="margin-left: 6px"></i>
+            </button>
         </div>
     </section>
 
@@ -729,123 +1685,714 @@
         <div class="footer-grid">
             <div class="footer-col">
                 <div class="logo" style="margin-bottom: 20px;">
-                    <i class="fa-solid fa-seedling"></i> FARMQUEST
+                    🌾 FARMQUEST
                 </div>
-                <p style="font-size: 0.85rem; color: rgba(236, 240, 241, 0.4); line-height: 1.5;">
-                    Deep-tech agricultural command platform mapping bio-metrics, digital twins, and decentralized ledgers.
+                <p>
+                    Deep-tech agricultural operational system command platform mapping biometrics, 3D terrains, zero-trust enclaves, and decentralized green carbon token registries.
                 </p>
             </div>
             <div class="footer-col">
-                <h4>MICROSERVICES Grid</h4>
+                <h4>ACTIVE ENCLAVE ROUTING MATRIX</h4>
                 <ul>
-                    <li><a href="#">user-service (port 3001)</a></li>
-                    <li><a href="#">realtime-service (port 3004)</a></li>
-                    <li><a href="#">bioinformatics-service (port 3008)</a></li>
-                    <li><a href="#">blockchain-service (port 3009)</a></li>
+                    <li><a href="#" onclick="Sound.tick()">&gt; api-gateway-service (port 3000)</a></li>
+                    <li><a href="#" onclick="Sound.tick()">&gt; webmcp-server-hub (port 3001)</a></li>
+                    <li><a href="#" onclick="Sound.tick()">&gt; bioinformatics-pcr (port 3008)</a></li>
+                    <li><a href="#" onclick="Sound.tick()">&gt; agents-graph-service (port 8000)</a></li>
                 </ul>
             </div>
             <div class="footer-col">
-                <h4>ACADEMIC CITATIONS</h4>
+                <h4>ACADEMIC DIAGNOSTICS REFERENCE LOGS</h4>
                 <ul>
-                    <li><a href="#">Gootenberg et al. (CRISPR Diagnostics)</a></li>
-                    <li><a href="#">Lotte et al. (Passive BCIs)</a></li>
-                    <li><a href="#">Farhi et al. (QAOA Algorithms)</a></li>
+                    <li><a href="#" onclick="Sound.tick()">&gt; Gootenberg et al. (CRISPR Pathogens)</a></li>
+                    <li><a href="#" onclick="Sound.tick()">&gt; Lotte et al. (Active EEG Passives)</a></li>
+                    <li><a href="#" onclick="Sound.tick()">&gt; NIST FIPS 204 (crystals-Dilithium)</a></li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
-            <div class="copyright">
-                &copy; 2026 FARMQUEST NEXUS. LOCKED UNDER CRYPTOGRAPHIC ECO-LICENSING.
-            </div>
-            <div class="socials">
-                <a href="#"><i class="fa-brands fa-github"></i></a>
-                <a href="#"><i class="fa-brands fa-discord"></i></a>
-                <a href="#"><i class="fa-brands fa-twitter"></i></a>
-            </div>
+          <div class="copyright">
+              &copy; 2026 FARMQUEST NEXUS. ALL PROTOCOLS SECURED UNDER CRYPTOGRAPHIC DILITHIUM ENCLAVE SIGNATURE RACKS.
+          </div>
+          <div class="socials">
+              <a href="#" onclick="Sound.tick()"><i class="fa-brands fa-github"></i></a>
+              <a href="#" onclick="Sound.tick()"><i class="fa-brands fa-discord"></i></a>
+          </div>
         </div>
     </footer>
 
     <!-- INTERACTIVE SCRIPTS -->
     <script>
-        // 1. Redirect to Login/Portal routes
+        // 1. Navigation / Router dispatch
         function navigateTo(path) {
             window.parent.postMessage({ type: 'NAVIGATE', path: path }, '*');
-            // Fallback
             window.location.href = path;
         }
 
-        // 2. Oscilloscope Wave Simulation on Canvas (Brain wave oscilloscope)
-        const canvas = document.getElementById('oscilloscope');
-        const ctx = canvas.getContext('2d');
-        let time = 0;
-
-        function animateOscilloscope() {
-            time += 0.05;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw oscilloscope grid lines
-            ctx.strokeStyle = 'rgba(0, 240, 255, 0.03)';
-            ctx.lineWidth = 1;
-            for (let i = 0; i < canvas.width; i += 20) {
-                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
-            }
-            for (let j = 0; j < canvas.height; j += 20) {
-                ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
-            }
-
-            // Alpha Waves (Cyan)
-            ctx.beginPath();
-            ctx.strokeStyle = '#00F0FF';
-            ctx.lineWidth = 1.5;
-            ctx.shadowBlur = 4;
-            ctx.shadowColor = '#00F0FF';
-            for (let x = 0; x < canvas.width; x++) {
-                const y = canvas.height / 2 + Math.sin(x * 0.04 + time) * 18 + Math.cos(x * 0.015 - time) * 6;
-                if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-
-            // Beta Waves (Green)
-            ctx.beginPath();
-            ctx.strokeStyle = '#00FF41';
-            ctx.lineWidth = 1.5;
-            ctx.shadowColor = '#00FF41';
-            for (let x = 0; x < canvas.width; x++) {
-                const y = canvas.height / 2 + Math.sin(x * 0.08 - time * 1.5) * 8 + Math.cos(x * 0.035 + time) * 3;
-                if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-            ctx.shadowBlur = 0; // Reset
-
-            requestAnimationFrame(animateOscilloscope);
-        }
-        animateOscilloscope();
-
-        // 3. Interactive Console Deck execution logs
-        function executeConsole(action) {
-            const output = document.getElementById('consoleOutput');
-            output.innerHTML = "DISPATCHING PACKET VECTOR IN PROGRESS... PLEASE WAIT.";
-            
-            setTimeout(() => {
-                if (action === 'ALGAE_BIOMASS') {
-                    output.innerHTML = ">>> ALGAE BIOMASS MAXIMIZER CONVERGED! BIOPHOTOMETER QUANTUM PATH: STABLE. YIELD EFFICACY INCREMENTED BY 14.82%!";
-                } else if (action === 'HAPTIC_OVERRIDE') {
-                    output.innerHTML = ">>> DRONE QUAD-01 FLEET LAUNCHED! POSTGIS ROUTE INGESTION COMPLETED. ROS2 COORDINATES BOUND TO AP-VECTOR 49A.";
-                } else if (action === 'LEDGER_AUDIT') {
-                    output.innerHTML = ">>> SOLANA LEDGER AUDITED successfully! AUDIT HASH: " + md5Mock(Date.now().toString()) + " // 0.0450 MINTED CARBON CREDITS PUSHED TO WALLET!";
+        // 2. Self-Contained Web Audio API synthesizers (Click, Hover, Success, Alarm cues)
+        const Sound = {
+            ctx: null,
+            getContext() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
                 }
-            }, 1200);
+                return this.ctx;
+            },
+            tick() {
+                try {
+                    const ctx = this.getContext();
+                    if (ctx.state === 'suspended') ctx.resume();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(900, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.04);
+                    gain.gain.setValueAtTime(0.015, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.05);
+                } catch(e) {}
+            },
+            hover() {
+                try {
+                    const ctx = this.getContext();
+                    if (ctx.state === 'suspended') ctx.resume();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(320, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(640, ctx.currentTime + 0.06);
+                    gain.gain.setValueAtTime(0.012, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.07);
+                } catch(e) {}
+            },
+            success() {
+                try {
+                    const ctx = this.getContext();
+                    if (ctx.state === 'suspended') ctx.resume();
+                    const now = ctx.currentTime;
+                    const freqs = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 (Major arpeggio)
+                    freqs.forEach((freq, i) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, now + i * 0.05);
+                        gain.gain.setValueAtTime(0.025, now + i * 0.05);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.05 + 0.18);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now + i * 0.05);
+                        osc.stop(now + i * 0.05 + 0.2);
+                    });
+                } catch(e) {}
+            },
+            alarm() {
+                try {
+                    const ctx = this.getContext();
+                    if (ctx.state === 'suspended') ctx.resume();
+                    const now = ctx.currentTime;
+                    for (let i = 0; i < 2; i++) {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(440, now + i * 0.22);
+                        osc.frequency.linearRampToValueAtTime(880, now + i * 0.22 + 0.12);
+                        gain.gain.setValueAtTime(0.018, now + i * 0.22);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.22 + 0.18);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now + i * 0.22);
+                        osc.stop(now + i * 0.22 + 0.2);
+                    }
+                } catch(e) {}
+            }
+        };
+
+        // Resume AudioContext upon initial click
+        function resumeSoundEngine() {
+            try {
+                const ctx = Sound.getContext();
+                if (ctx && ctx.state === 'suspended') {
+                    ctx.resume();
+                }
+                Sound.success();
+                document.getElementById('sound-alert-banner').style.display = 'none';
+            } catch(e) {}
         }
 
-        // Quick mock hash generator
-        function md5Mock(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                hash = (hash << 5) - hash + str.charCodeAt(i);
-                hash |= 0;
+        // 3. Biome Management & Shifting Color Schemes
+        const biomeData = {
+            algae: { color: '#00FF41', rgb: '0, 255, 65', freqs: [110, 165, 220, 330] },
+            hydro: { color: '#00F0FF', rgb: '0, 240, 255', freqs: [147, 220, 294, 440] },
+            crispr: { color: '#FF006B', rgb: '255, 0, 107', freqs: [130, 195, 260, 390] },
+            ledger: { color: '#FF00FF', rgb: '255, 0, 255', freqs: [165, 247, 330, 495] }
+        };
+        let currentBiome = 'algae';
+
+        function selectBiome(biome) {
+            Sound.tick();
+            
+            // Remove active classes
+            document.querySelectorAll('.biome-card').forEach(c => c.classList.remove('active'));
+            
+            // Add active class
+            document.getElementById(`biome-${biome}`).classList.add('active');
+            
+            currentBiome = biome;
+            const data = biomeData[biome];
+
+            // Mutate CSS Custom variables dynamically
+            document.documentElement.style.setProperty('--neon-accent', data.color);
+            document.documentElement.style.setProperty('--neon-accent-rgb', data.rgb);
+            
+            // Shift headers, version tags, logos
+            document.getElementById('logo-span').style.color = data.color;
+            document.getElementById('logo-version-tag').style.borderColor = `rgba(${data.rgb}, 0.4)`;
+            document.getElementById('logo-version-tag').style.background = `rgba(${data.rgb}, 0.1)`;
+            document.getElementById('logo-version-tag').style.color = data.color;
+
+            // Shift HUD frame borders
+            const hudFrame = document.getElementById('hud-frame');
+            hudFrame.style.borderColor = `rgba(${data.rgb}, 0.35)`;
+            hudFrame.style.boxShadow = `inset 0 0 20px rgba(${data.rgb}, 0.15), 0 0 35px rgba(0, 0, 0, 0.4)`;
+
+            // Shift HUD header title text color
+            document.getElementById('hud-title-text').style.color = data.color;
+
+            // Shift features icon boxes
+            document.querySelectorAll('.feature-icon').forEach(icon => {
+                icon.style.color = data.color;
+                icon.style.borderColor = `rgba(${data.rgb}, 0.2)`;
+                icon.style.background = `rgba(${data.rgb}, 0.1)`;
+            });
+
+            // Adjust synth arpeggio drone loop frequencies on the fly if drone is active
+            if (isDroneActive) {
+                startDroneLoop();
             }
-            return Math.abs(hash).toString(16).padEnd(32, 'a7d');
+
+            typeWriterOutput(`>> SHIFTING COGNITIVE SUB-MATRIX...
+>> NEW CORE BIOME MOUNTED: ${biome.toUpperCase()} (${biome.toUpperCase()} COGNITIVE SYSTEM)
+>> DILITHIUM SECURITY MATRIX ADJUSTED. OSCILLOSCOPE MODULATION SYNC COMPLETE.
+>> SYSTEM TELEMETRY DAMPERS: OPTIMAL.`);
         }
+
+        // 4. Tab selection pane switcher
+        let activeTab = 'eeg';
+        function switchHudTab(tab) {
+            Sound.tick();
+            activeTab = tab;
+            
+            document.querySelectorAll('.hud-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.hud-content-pane').forEach(p => p.classList.remove('active'));
+            
+            document.getElementById(`tab-btn-${tab}`).classList.add('active');
+            document.getElementById(`pane-${tab}`).classList.add('active');
+        }
+
+        // 5. Canvas brainwave EEG oscilloscope rendering loop
+        const oscilloscopeCanvas = document.getElementById('oscilloscope');
+        const oscilloscopeCtx = oscilloscopeCanvas.getContext('2d');
+        
+        let activeEegChannel = 'alpha';
+        const eegParams = {
+            alpha: { freq1: 0.03, freq2: 0.01, amp1: 20, amp2: 10, title: 'Alpha Relaxed Focus' },
+            beta: { freq1: 0.08, freq2: 0.04, amp1: 15, amp2: 6, title: 'Beta Active Focus' },
+            gamma: { freq1: 0.15, freq2: 0.08, amp1: 8, amp2: 4, title: 'Gamma High Cognition' },
+            theta: { freq1: 0.015, freq2: 0.005, amp1: 30, amp2: 15, title: 'Theta Deep Processing' }
+        };
+
+        function selectEegChannel(chan) {
+            Sound.tick();
+            activeEegChannel = chan;
+            document.querySelectorAll('.eeg-chan-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`chan-${chan}`).classList.add('active');
+            document.getElementById('eeg-active-title').innerText = eegParams[chan].title;
+
+            typeWriterOutput(`>> CHANNEL SYNC CONGESTED: ${eegParams[chan].title.toUpperCase()}\n>> ADJUSTING EEG OSCILLOSCOPE AMPLITUDE PROFILE FOR OPTIMAL BIO-SYNAPSING...`);
+        }
+
+        let eegTime = 0;
+        function animateEegOscilloscope() {
+            eegTime += 0.05;
+            oscilloscopeCtx.clearRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height);
+
+            // Draw grid
+            oscilloscopeCtx.strokeStyle = 'rgba(0, 240, 255, 0.02)';
+            oscilloscopeCtx.lineWidth = 1;
+            for (let i = 0; i < oscilloscopeCanvas.width; i += 20) {
+                oscilloscopeCtx.beginPath(); oscilloscopeCtx.moveTo(i, 0); oscilloscopeCtx.lineTo(i, oscilloscopeCanvas.height); oscilloscopeCtx.stroke();
+            }
+            for (let j = 0; j < oscilloscopeCanvas.height; j += 20) {
+                oscilloscopeCtx.beginPath(); oscilloscopeCtx.moveTo(0, j); oscilloscopeCtx.lineTo(oscilloscopeCanvas.width, j); oscilloscopeCtx.stroke();
+            }
+
+            const params = eegParams[activeEegChannel];
+            const themeColor = biomeData[currentBiome].color;
+
+            // Draw primary wave
+            oscilloscopeCtx.beginPath();
+            oscilloscopeCtx.strokeStyle = themeColor;
+            oscilloscopeCtx.lineWidth = 2.5;
+            oscilloscopeCtx.shadowBlur = 8;
+            oscilloscopeCtx.shadowColor = themeColor;
+            for (let x = 0; x < oscilloscopeCanvas.width; x++) {
+                const y = oscilloscopeCanvas.height / 2 + 
+                    Math.sin(x * params.freq1 + eegTime) * params.amp1 + 
+                    Math.cos(x * params.freq2 + eegTime * 1.5) * params.amp2;
+                if (x === 0) oscilloscopeCtx.moveTo(x, y);
+                else oscilloscopeCtx.lineTo(x, y);
+            }
+            oscilloscopeCtx.stroke();
+            oscilloscopeCtx.shadowBlur = 0;
+
+            // Draw subtle secondary wave
+            oscilloscopeCtx.beginPath();
+            oscilloscopeCtx.strokeStyle = themeColor + '55'; // 33% opacity
+            oscilloscopeCtx.lineWidth = 1.2;
+            for (let x = 0; x < oscilloscopeCanvas.width; x++) {
+                const y = oscilloscopeCanvas.height / 2 + 
+                    Math.cos(x * (params.freq1 * 1.6) - eegTime * 1.2) * (params.amp1 * 0.7) + 
+                    Math.sin(x * (params.freq2 * 0.8) - eegTime * 0.8) * (params.amp2 * 0.7);
+                if (x === 0) oscilloscopeCtx.moveTo(x, y);
+                else oscilloscopeCtx.lineTo(x, y);
+            }
+            oscilloscopeCtx.stroke();
+
+            requestAnimationFrame(animateEegOscilloscope);
+        }
+        animateEegOscilloscope();
+
+        // 6. Interactive browser Web Audio Synthesizer Controls
+        let synthFrequency = 440;
+        let synthVolume = 0.15;
+        let synthWaveform = 'triangle';
+        let isDroneActive = false;
+        let droneOscillators = [];
+        let droneBiquadFilter = null;
+        let droneGainNode = null;
+
+        function updateSynthFreq(val) {
+            synthFrequency = parseInt(val);
+            document.getElementById('freq-val').innerText = `${val} HZ`;
+            document.getElementById('synth-wave-readout').innerText = `WAVEFORM: ${synthWaveform.toUpperCase()} @ ${synthFrequency}HZ`;
+            if (Math.random() > 0.8) Sound.tick();
+        }
+
+        function updateSynthVol(val) {
+            synthVolume = parseFloat(val);
+            document.getElementById('vol-val').innerText = `${Math.round(val * 100)}%`;
+            
+            // Adjust volume of active drone loop
+            if (droneGainNode) {
+                const ctx = Sound.getContext();
+                droneGainNode.gain.linearRampToValueAtTime(synthVolume * 0.18, ctx.currentTime);
+            }
+        }
+
+        function selectWaveform(w) {
+            Sound.tick();
+            synthWaveform = w;
+            document.querySelectorAll('.wave-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`wave-${w}`).classList.add('active');
+            document.getElementById('synth-wave-readout').innerText = `WAVEFORM: ${synthWaveform.toUpperCase()} @ ${synthFrequency}HZ`;
+        }
+
+        function playCustomPulse() {
+            try {
+                const ctx = Sound.getContext();
+                if (ctx.state === 'suspended') ctx.resume();
+                
+                document.getElementById('sound-alert-banner').style.display = 'none';
+
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = synthWaveform;
+                osc.frequency.setValueAtTime(synthFrequency, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(synthFrequency / 3, ctx.currentTime + 0.15);
+
+                gain.gain.setValueAtTime(synthVolume * 0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start();
+                osc.stop(ctx.currentTime + 0.17);
+            } catch(e) {}
+        }
+
+        function startDroneLoop() {
+            try {
+                const ctx = Sound.getContext();
+                if (ctx.state === 'suspended') ctx.resume();
+                
+                document.getElementById('sound-alert-banner').style.display = 'none';
+                stopDroneLoop();
+
+                droneGainNode = ctx.createGain();
+                droneBiquadFilter = ctx.createBiquadFilter();
+
+                droneBiquadFilter.type = 'lowpass';
+                droneBiquadFilter.frequency.setValueAtTime(150, ctx.currentTime);
+                droneBiquadFilter.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 3);
+                droneBiquadFilter.Q.setValueAtTime(4, ctx.currentTime);
+
+                const data = biomeData[currentBiome];
+                const oscillators = data.freqs.map((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq + (idx - 1.5) * 1.5, ctx.currentTime);
+                    return osc;
+                });
+
+                oscillators.forEach(osc => osc.connect(droneBiquadFilter));
+                droneBiquadFilter.connect(droneGainNode);
+                droneGainNode.connect(ctx.destination);
+
+                droneGainNode.gain.setValueAtTime(0.001, ctx.currentTime);
+                droneGainNode.gain.linearRampToValueAtTime(synthVolume * 0.18, ctx.currentTime + 1.5);
+
+                oscillators.forEach(osc => osc.start());
+
+                const sweepLFO = ctx.createOscillator();
+                const sweepLFOGain = ctx.createGain();
+                sweepLFO.frequency.setValueAtTime(0.08, ctx.currentTime);
+                sweepLFOGain.gain.setValueAtTime(400, ctx.currentTime);
+
+                sweepLFO.connect(sweepLFOGain);
+                sweepLFOGain.connect(droneBiquadFilter.frequency);
+                sweepLFO.start();
+
+                droneOscillators = [...oscillators, sweepLFO];
+                isDroneActive = true;
+                
+                const btn = document.getElementById('drone-toggle-btn');
+                btn.classList.add('active');
+                btn.innerHTML = '<i class="fa-solid fa-square"></i> STOP DRONE';
+            } catch(e) {}
+        }
+
+        function stopDroneLoop() {
+            if (droneOscillators.length > 0) {
+                try {
+                    droneOscillators.forEach(o => o.stop());
+                } catch(e) {}
+                droneOscillators = [];
+            }
+            isDroneActive = false;
+            
+            const btn = document.getElementById('drone-toggle-btn');
+            btn.classList.remove('active');
+            btn.innerHTML = '<i class="fa-solid fa-music"></i> AMB-DRONE';
+        }
+
+        function toggleDroneLoop() {
+            Sound.tick();
+            if (isDroneActive) {
+                stopDroneLoop();
+            } else {
+                startDroneLoop();
+            }
+        }
+
+        // Synth oscilloscope rendering
+        const synthCanvas = document.getElementById('synth-oscilloscope');
+        const synthCtx = synthCanvas.getContext('2d');
+        let synthPhase = 0;
+
+        function animateSynthOscilloscope() {
+            synthPhase = (synthPhase + 0.18) % (Math.PI * 2);
+            synthCtx.clearRect(0, 0, synthCanvas.width, synthCanvas.height);
+
+            const activeColor = biomeData[currentBiome].color;
+            synthCtx.strokeStyle = activeColor;
+            synthCtx.lineWidth = 2;
+            synthCtx.shadowBlur = 6;
+            synthCtx.shadowColor = activeColor;
+
+            synthCtx.beginPath();
+            const width = synthCanvas.width;
+            const height = synthCanvas.height;
+            const amp = isDroneActive ? 18 : 6;
+            const numPoints = 60;
+
+            for (let i = 0; i <= numPoints; i++) {
+                const x = (i / numPoints) * width;
+                const ratio = i / numPoints;
+                const envelope = Math.sin(ratio * Math.PI); // fade edges
+
+                let y = height / 2;
+                const phase = (ratio * (synthFrequency / 70) + synthPhase);
+                
+                if (synthWaveform === 'sine') {
+                    y += Math.sin(phase) * amp * envelope;
+                } else if (synthWaveform === 'triangle') {
+                    const trig = Math.abs(((phase % (Math.PI * 2)) / Math.PI) - 1) * 2 - 1;
+                    y += trig * amp * envelope;
+                } else if (synthWaveform === 'sawtooth') {
+                    const saw = ((phase % (Math.PI * 2)) / (Math.PI * 2)) * 2 - 1;
+                    y += saw * amp * envelope;
+                } else if (synthWaveform === 'square') {
+                    const sq = Math.sin(phase) >= 0 ? 1 : -1;
+                    y += sq * amp * envelope;
+                }
+
+                if (i === 0) synthCtx.moveTo(x, y);
+                else synthCtx.lineTo(x, y);
+            }
+            synthCtx.stroke();
+            synthCtx.shadowBlur = 0;
+
+            requestAnimationFrame(animateSynthOscilloscope);
+        }
+        animateSynthOscilloscope();
+
+        // 7. Full-Screen Connected Particles matrix loop
+        const particlesCanvas = document.getElementById('particles-canvas');
+        const particlesCtx = particlesCanvas.getContext('2d');
+        let particles = [];
+
+        function resizeParticlesCanvas() {
+            particlesCanvas.width = window.innerWidth;
+            particlesCanvas.height = window.innerHeight;
+            
+            const count = Math.min(50, Math.floor((particlesCanvas.width * particlesCanvas.height) / 32000));
+            particles = [];
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * particlesCanvas.width,
+                    y: Math.random() * particlesCanvas.height,
+                    vx: (Math.random() - 0.5) * 0.35,
+                    vy: (Math.random() - 0.5) * 0.35,
+                    radius: Math.random() * 2 + 1
+                });
+            }
+        }
+        resizeParticlesCanvas();
+        window.addEventListener('resize', resizeParticlesCanvas);
+
+        let mouseX = -1000;
+        let mouseY = -1000;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+        window.addEventListener('mouseout', () => {
+            mouseX = -1000;
+            mouseY = -1000;
+        });
+
+        function animateParticles() {
+            particlesCtx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+            
+            const activeColor = biomeData[currentBiome].color;
+            particlesCtx.fillStyle = activeColor + '44';
+
+            particles.forEach((p, idx) => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > particlesCanvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > particlesCanvas.height) p.vy *= -1;
+
+                if (mouseX !== -1000 && mouseY !== -1000) {
+                    const dx = mouseX - p.x;
+                    const dy = mouseY - p.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 140) {
+                        p.x += (dx / dist) * 0.15;
+                        p.y += (dy / dist) * 0.15;
+                    }
+                }
+
+                particlesCtx.beginPath();
+                particlesCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                particlesCtx.fill();
+
+                for (let j = idx + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 120) {
+                        const alpha = (1 - dist / 120) * 0.06;
+                        particlesCtx.strokeStyle = `rgba(${biomeData[currentBiome].rgb}, ${alpha})`;
+                        particlesCtx.lineWidth = 0.6;
+                        particlesCtx.beginPath();
+                        particlesCtx.moveTo(p.x, p.y);
+                        particlesCtx.lineTo(p2.x, p2.y);
+                        particlesCtx.stroke();
+                    }
+                }
+            });
+
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // 8. Simulated rPPG Cardiovascular ECG canvas
+        const rppgCanvas = document.getElementById('rppg-canvas');
+        const rppgCtx = rppgCanvas.getContext('2d');
+        let rppgOffset = 0;
+
+        function animateRppg() {
+            rppgCtx.clearRect(0, 0, rppgCanvas.width, rppgCanvas.height);
+            rppgCtx.strokeStyle = '#FF006B';
+            rppgCtx.lineWidth = 2;
+            rppgCtx.shadowBlur = 6;
+            rppgCtx.shadowColor = '#FF006B';
+
+            rppgCtx.beginPath();
+            for (let x = 0; x < rppgCanvas.width; x++) {
+                let y = rppgCanvas.height / 2;
+                const normX = (x + rppgOffset) % 60;
+                if (normX > 15 && normX < 18) {
+                    y -= 12; // P wave
+                } else if (normX >= 18 && normX < 20) {
+                    y += 4;
+                } else if (normX >= 20 && normX < 22) {
+                    y -= 30; // QRS peak
+                } else if (normX >= 22 && normX < 24) {
+                    y += 15;
+                } else if (normX >= 24 && normX < 28) {
+                    y -= 4;
+                } else if (normX >= 32 && normX < 38) {
+                    y -= 8; // T wave
+                }
+
+                if (x === 0) rppgCtx.moveTo(x, y);
+                else rppgCtx.lineTo(x, y);
+            }
+            rppgCtx.stroke();
+            rppgCtx.shadowBlur = 0;
+            rppgOffset += 1.5;
+
+            requestAnimationFrame(animateRppg);
+        }
+        animateRppg();
+
+        // 9. CLI Command Input Parser & Console Deck typewriter
+        let isCliCompiling = false;
+        
+        function handleCliSubmit(e) {
+            e.preventDefault();
+            if (isCliCompiling) return;
+            
+            const input = document.getElementById('cli-input');
+            const cmd = input.value.trim();
+            if (!cmd) return;
+            
+            input.value = '';
+            runCliCommand(cmd);
+        }
+
+        function runCliCommand(cmd) {
+            if (isCliCompiling) return;
+            
+            Sound.tick();
+            isCliCompiling = true;
+            
+            const output = document.getElementById('consoleOutput');
+            let response = `\n[SYSTEM@FARMQUEST] > ${cmd}\n`;
+            
+            const args = cmd.split(' ');
+            const primaryCmd = args[0].toLowerCase();
+
+            if (primaryCmd === '/help') {
+                response += `>> AVAILABLE PROTOCOLS & CORE EXECUTIVE MACROS:
+------------------------------------------------------------
+  /help            - EXPOSE ALL ACTIVE CLI ACTIONS
+  /scan            - INITIATE CRISPR PATHOGEN PCR DIAGNOSTICS
+  /status          - RENDER ENCLAVE METRICS & SOLANA LEDGER
+  /biome <name>    - SHIFT COGNITIVE BIOME (algae, hydro, crispr, ledger)
+  /audio           - TOGGLE AMB-DRONE SYNTH COBALT ENGINE
+  /solana          - SECURITIZE CARBON DEED & MINT SPL TOKEN
+  /clear           - PURGE DECK TERMINAL HISTORIES
+------------------------------------------------------------`;
+                typeWriterOutput(response);
+                isCliCompiling = false;
+            } else if (primaryCmd === '/clear') {
+                output.innerHTML = '>> CONSOLE PURGE COMPLETED. READY FOR INSTRUCTIONS.';
+                isCliCompiling = false;
+            } else if (primaryCmd === '/scan') {
+                Sound.alarm();
+                typeWriterOutput(response + `>> INITIATING BIOPHOTOIC DNA PATHOGEN SCAN...\n>> ALIGNING CAS12 ENZYMATIC TARGET MATRIX...`);
+                
+                setTimeout(() => {
+                    Sound.success();
+                    typeWriterOutput(response + `>> SCAN COMPLETED. 0 MUTATIONS IDENTIFIED.\n>> ALGAE BIO-REACTORS: 99.8% HEALTHY\n>> PCR SEED SEQUENCE GAP INDEX: 0.00% (STABLE)\n>> BIOME COMPLIANCE STATUS: RATED AA+`);
+                    isCliCompiling = false;
+                }, 1500);
+            } else if (primaryCmd === '/status') {
+                typeWriterOutput(response + `>> ECO SYSTEM OS HEALTH REPORT:
+------------------------------------------------------------
+  BCI BLUETOOTH FEED : SYNCED (ATTENTION: 84%)
+  rPPG HEART MONITOR : ACTIVE (PULSE: 72 BPM)
+  SOLANA ENCLAVE     : AgriFarmerX992b8dff2384a88fbc923e
+  MUTUAL TLS 1.3     : VERIFIED (SPIRE ISSUED CERTIFICATE)
+  LOCAL STORAGE MET  : POSTGRESQL STABLE (PORT 5433)
+  NEO4J GRAPHRAG     : SEEDED WITH 1,422 PATHOGEN RELATIONSHIPS
+------------------------------------------------------------`);
+                isCliCompiling = false;
+            } else if (primaryCmd === '/biome') {
+                const targetBiome = args[1]?.toLowerCase();
+                if (targetBiome === 'algae' || targetBiome === 'hydro' || targetBiome === 'crispr' || targetBiome === 'ledger') {
+                    selectBiome(targetBiome);
+                } else {
+                    typeWriterOutput(response + `>> ERROR: INVALID BIOME NAME. SELECT algae, hydro, crispr, or ledger.\n>> EXAMPLE: /biome hydro`);
+                }
+                isCliCompiling = false;
+            } else if (primaryCmd === '/audio') {
+                toggleDroneLoop();
+                typeWriterOutput(response + `>> SYNTH ENGINE STATE MODIFIED.\n>> COBALT DRONE DRIVERS SET TO: ${!isDroneActive ? 'ENABLED' : 'DISABLED'}`);
+                isCliCompiling = false;
+            } else if (primaryCmd === '/solana') {
+                Sound.alarm();
+                typeWriterOutput(response + `>> COMPILING GREEN PRACTICES TRANSACTION PACKETS...\n>> SEALING CRYPTOGRAPHIC RECEIPT DILITHIUM KEYS...`);
+                
+                setTimeout(() => {
+                    Sound.success();
+                    typeWriterOutput(response + `>> TRANSACTION SECURED ON SOLANA BLOCKCHAIN.\n>> Anchor CERTIFICATE SIGNATURE: AgriLedgerSignature0xf3d9_a8f2\n>> CARBON SPL CREDIT TOKEN MINTED TO WALLET ADDRESS:\n   AgriFarmerX992b... (+14.00 Carbon Credits)`);
+                    isCliCompiling = false;
+                }, 1500);
+            } else {
+                typeWriterOutput(response + `>> ERROR: PROTOCOL NOT FOUND.\n>> TYPE /help TO EXPOSE ACTIVE OS COMMANDS.`);
+                isCliCompiling = false;
+            }
+        }
+
+        function typeWriterOutput(fullText) {
+            const output = document.getElementById('consoleOutput');
+            let currentText = '';
+            let index = 0;
+            
+            const interval = setInterval(() => {
+                currentText += fullText[index];
+                output.innerHTML = currentText;
+                index++;
+                if (index >= fullText.length) {
+                    clearInterval(interval);
+                }
+                if (Math.random() > 0.85) Sound.tick();
+            }, 10);
+        }
+
+        // 10. Simulated Microservices Latency Metrics
+        function updateLatencyMetrics() {
+            document.getElementById('ping-gateway').innerText = `${Math.floor(8 + Math.random() * 8)}ms`;
+            document.getElementById('ping-mcp').innerText = `${Math.floor(12 + Math.random() * 10)}ms`;
+            document.getElementById('ping-crispr').innerText = `${Math.floor(22 + Math.random() * 15)}ms`;
+            document.getElementById('ping-graph').innerText = `${Math.floor(45 + Math.random() * 20)}ms`;
+        }
+        setInterval(updateLatencyMetrics, 3000);
     </script>
 </body>
 </html>
