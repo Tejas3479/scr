@@ -117,11 +117,14 @@ jobs:
       
       - name: Configure kubectl
         run: |
-          echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
-          export KUBECONFIG=./kubeconfig
+          if echo "${{ secrets.KUBECONFIG }}" | grep -q "apiVersion"; then
+            echo "${{ secrets.KUBECONFIG }}" > ${{ github.workspace }}/kubeconfig
+          else
+            echo "${{ secrets.KUBECONFIG }}" | base64 -d > ${{ github.workspace }}/kubeconfig
+          fi
+          echo "KUBECONFIG=${{ github.workspace }}/kubeconfig" >> $GITHUB_ENV
       
       - name: Deploy to Kubernetes
         run: |
-          export KUBECONFIG=./kubeconfig
           kubectl set image deployment/api-gateway api-gateway=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/api-gateway:${{ github.sha }} -n ecofarm
           kubectl rollout status deployment/api-gateway -n ecofarm
