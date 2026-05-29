@@ -4,6 +4,7 @@ const redis = require('redis');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const winston = require('winston');
+const passkeyHelper = require('./api/passkey');
 require('dotenv').config();
 
 const app = express();
@@ -306,6 +307,162 @@ app.get('/api/debug/test-user', async (req, res) => {
       error: error.message, 
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
+  }
+});
+
+// Cache challenges in memory for verification (in prod, use Redis)
+const challengeCache = new Map();
+
+// 1. Passkey Registration Options
+app.post('/api/auth/passkey/register-options', async (req, res) => {
+  try {
+    const { userId, phone, name } = req.body;
+    if (!userId || !phone) {
+      return res.status(400).json({ error: 'User ID and phone are required for passkey setup' });
+    }
+
+    const options = passkeyHelper.generateRegistrationOptions({ id: userId, phone, name: name || 'Farming Pioneer' });
+    challengeCache.set(`reg-challenge:${userId}`, options.challenge);
+    
+    res.json(options);
+  } catch (error) {
+    logger.error('Passkey registration options error:', error);
+    res.status(500).json({ error: 'Failed to generate registration options' });
+  }
+});
+
+// 2. Verify and Save Passkey Registration
+app.post('/api/auth/passkey/register-verify', async (req, res) => {
+  try {
+    const { userId, response } = req.body;
+    if (!userId || !response) {
+      return res.status(400).json({ error: 'User ID and response payload are required' });
+    }
+
+    const originalChallenge = challengeCache.get(`reg-challenge:${userId}`);
+    if (!originalChallenge) {
+      return res.status(400).json({ error: 'Registration challenge expired or invalid' });
+    }
+
+    // Verify response
+    const verification = passkeyHelper.verifyRegistrationResponse(response, originalChallenge);
+    challengeCache.delete(`reg-challenge:${userId}`);
+
+    if (verification.verified) {
+      // Save credentials in PostgreSQL users table
+      await pool.query(
+        `UPDATE users 
+         SET passkey_credential_id = $1, passkey_public_key = $2, mfa_enabled = true
+         WHERE id = $3`,
+        [verification.credentialId, verification.publicKey, userId]
+      );
+
+      logger.info('Passkey successfully registered and bound', { userId });
+      res.json({ success: true, message: 'Passkey registered and activated' });
+    } else {
+      res.status(400).json({ success: false, error: 'Registration verification failed' });
+    }
+  } catch (error) {
+    logger.error('Passkey registration verification error:', error);
+    res.status(500).json({ error: 'Failed to verify passkey registration' });
+  }
+});
+
+// 3. Passkey Login Options
+app.post('/api/auth/passkey/login-options', async (req, res) => {
+  try {
+    const { phone } = req.body;
+    if (!phone) {
+      return res.status(400).json({ error: 'Phone number required' });
+    }
+
+    // Fetch user credentials
+    const result = await pool.query(
+      'SELECT id, passkey_credential_id FROM users WHERE phone = $1',
+      [phone]
+    );
+
+    if (result.rows.length === 0 || !result.rows[0].passkey_credential_id) {
+      return res.status(404).json({ error: 'No passkeys found for this phone number' });
+    }
+
+    const user = result.rows[0];
+    const options = passkeyHelper.generateAuthenticationOptions();
+    
+    challengeCache.set(`auth-challenge:${user.id}`, options.challenge);
+    
+    res.json({
+      ...options,
+      userId: user.id,
+      allowCredentials: [{
+        type: 'public-key',
+        id: Buffer.from(user.passkey_credential_id).toString('base64url')
+      }]
+    });
+  } catch (error) {
+    logger.error('Passkey login options error:', error);
+    res.status(500).json({ error: 'Failed to generate authentication options' });
+  }
+});
+
+// 4. Verify Passkey Login & Issue JWT
+app.post('/api/auth/passkey/login-verify', async (req, res) => {
+  try {
+    const { userId, response } = req.body;
+    if (!userId || !response) {
+      return res.status(400).json({ error: 'User ID and response required' });
+    }
+
+    const originalChallenge = challengeCache.get(`auth-challenge:${userId}`);
+    if (!originalChallenge) {
+      return res.status(400).json({ error: 'Authentication challenge expired or invalid' });
+    }
+
+    // Fetch public key
+    const userResult = await pool.query(
+      'SELECT id, phone, name, language, level, points, passkey_public_key FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (userResult.rows.length === 0 || !userResult.rows[0].passkey_public_key) {
+      return res.status(404).json({ error: 'User credentials not found' });
+    }
+
+    const user = userResult.rows[0];
+    const verified = passkeyHelper.verifyAuthenticationAssertion(
+      response,
+      originalChallenge,
+      user.passkey_public_key
+    );
+
+    challengeCache.delete(`auth-challenge:${userId}`);
+
+    if (verified) {
+      const token = jwt.sign(
+        { userId: user.id, phone: user.phone, role: 'user' },
+        process.env.JWT_SECRET || 'default-secret-change-in-production',
+        { expiresIn: '24h' }
+      );
+
+      logger.info('Passkey login successful', { userId });
+      res.json({
+        success: true,
+        user: {
+          id: user.id,
+          phone: user.phone,
+          name: user.name,
+          language: user.language,
+          level: user.level || 1,
+          points: user.points || 0
+        },
+        token
+      });
+    } else {
+      res.status(401).json({ success: false, error: 'Passkey signature verification failed' });
+    }
+  } catch (error) {
+    logger.error('Passkey verification login error:', error);
+    res.status(500).json({ error: 'Failed to verify passkey login' });
   }
 });
 

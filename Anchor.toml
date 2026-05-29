@@ -1,0 +1,9 @@
+[programs.localnet]
+eco_farm = "AgriLedger111111111111111111111111111111111"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"

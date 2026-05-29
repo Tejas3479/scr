@@ -1,127 +1,106 @@
-# 🌾 AI-Powered Gamified Farming Platform - Technical Architecture
+# 🌾 Eco Farm v3.0 — Solarpunk Cognitive Agriculture OS
 
-## Overview
-
-This is a comprehensive, scalable, and secure technical architecture for an AI-powered gamified farming platform designed to engage rural farmers through gamification, real-time AI assistance, and community-driven learning.
-
-## 🏗️ Architecture Highlights
-
-- **Multi-tier, Microservices Architecture** with horizontal scaling
-- **Offline-First Design** for intermittent connectivity in rural areas
-- **AI/ML Layer** with on-device and server-side inference
-- **Real-Time Features** including live streaming, chat, and notifications
-- **Blockchain Integration** for sustainability certification and rewards
-- **Multi-platform Support** (Mobile, Web, PWA)
-
-## 📁 Project Structure
-
-```
-eco-farm-platform/
-├── architecture/              # Architecture documentation
-├── client/                    # Client applications
-│   ├── mobile/               # React Native mobile app
-│   ├── web/                  # React web dashboard
-│   └── pwa/                  # Progressive Web App
-├── services/                  # Microservices
-│   ├── api-gateway/          # API Gateway service
-│   ├── user-service/         # User & Profile service
-│   ├── gamification-service/ # Gamification engine
-│   ├── ai-service/           # AI/ML services
-│   ├── realtime-service/     # Real-time & streaming
-│   ├── content-service/      # Content & localization
-│   └── integration-service/  # External integrations
-├── infrastructure/            # Infrastructure as Code
-│   ├── docker/               # Docker configurations
-│   ├── kubernetes/           # K8s manifests
-│   ├── terraform/            # Infrastructure provisioning
-│   └── monitoring/           # Monitoring setup
-├── database/                  # Database schemas & migrations
-├── ai-ml/                     # AI/ML models & pipelines
-├── ci-cd/                     # CI/CD pipelines
-└── docs/                      # Additional documentation
-```
-
-## 🚀 Quick Start
-
-See individual service READMEs for setup instructions:
-- [API Gateway](./services/api-gateway/README.md)
-- [User Service](./services/user-service/README.md)
-- [AI Service](./services/ai-service/README.md)
-- [Client Applications](./client/README.md)
-
-## 📚 Documentation
-
-- [Complete Architecture Documentation](./architecture/ARCHITECTURE.md)
-- [Deployment Guide](./docs/DEPLOYMENT.md)
-- [API Documentation](./docs/API.md)
-- [Security Guidelines](./docs/SECURITY.md)
-
-## 🛠️ Technology Stack
-
-### Frontend
-- React Native (Mobile)
-- React.js + Next.js (Web)
-- Progressive Web App (PWA)
-- Three.js, ARCore/ARKit
-
-### Backend
-- Node.js + TypeScript (Microservices)
-- Python + FastAPI (AI Services)
-- Express.js (API Gateway)
-
-### AI/ML
-- TensorFlow, PyTorch
-- TensorFlow Serving, TorchServe
-- MLflow, Apache Airflow
-
-### Databases
-- PostgreSQL (Transactional)
-- MongoDB (Document store)
-- Redis (Cache & Real-time)
-- InfluxDB (Time-series)
-- Elasticsearch (Search)
-
-### Infrastructure
-- Docker & Kubernetes
-- AWS/Azure/GCP
-- Terraform
-- Prometheus & Grafana
-
-### Integrations
-- Government APIs (PM-KISAN, PKVY)
-- Weather APIs (IMD, OpenWeather)
-- Payment Gateways (UPI)
-- IoT (MQTT)
-
-## 🔒 Security
-
-- OAuth 2.0 + JWT
-- End-to-end encryption (AES-256, TLS 1.3)
-- RBAC implementation
-- Compliance: GDPR, India PDPA
-
-## 📊 Capacity Planning
-
-- **Initial Launch**: 50,000 concurrent users
-- **Daily Active Users**: 20,000
-- **API Throughput**: 2,000 req/sec
-- **Storage (Year 1)**: 10 TB
-- **ML Inference**: 100,000 requests/day
-
-## 🤝 Contributing
-
-See [CONTRIBUTING.md](./docs/CONTRIBUTING.md) for development guidelines.
-
-## 📄 License
-
-[Specify License]
-
-## 👥 Team
-
-[Team Information]
+Welcome to the production-ready monorepo for the **Eco Farm v3.0** platform, featuring zero-trust biometric authentication, decentralized carbon ledger minting, real-time bioinformatics, and autonomous AI query routing.
 
 ---
 
-For detailed architecture information, see [ARCHITECTURE.md](./architecture/ARCHITECTURE.md)
+## 🏗️ Monorepo Structure
 
+Our codebase is organized as a Turborepo-managed `pnpm` workspace structure:
 
+```
+eco-farm-monorepo/
+├── apps/
+│   ├── api/             # NestJS API Gateway (Passkeys, Solana credits, TEE)
+│   ├── mcp-server/      # Express WebMCP Server (search_knowledge, mint_carbon_credit)
+│   ├── web/             # farmquest-web-dashboard (Next.js 14 App Router client)
+│   └── agents/          # LangGraph Multi-Agent Engine (FastAPI agent query routing)
+├── packages/
+│   └── db/              # Shared database module (Prisma client & migrations)
+├── services/
+│   └── bioinformatics-service/ # FastAPI CRISPR DNA sequence alignment pipeline
+├── database/
+│   └── local_pg_data/   # User-space PostgreSQL 18 database cluster
+├── package.json         # Root package manager & Turborepo configurations
+├── turbo.json           # Turborepo build caching & dependency pipeline
+└── .env                 # Monorepo environment configurations
+```
+
+---
+
+## 🛠️ Port & Service Mappings
+
+When running locally, services run on these assigned ports:
+
+- **Local PostgreSQL DB:** Port `5433` (Trust Authentication, database `ecofarm`)
+- **NestJS API Gateway:** Port `3000` (FastAPI / Prisma Client / WebAuthn)
+- **WebMCP Server:** Port `3001` (MCP tools bridge over Express endpoint `/mcp`)
+- **Next.js PWA Client:** Port `3007` (Visual glassmorphic dashboard HUD)
+- **CRISPR Diagnostics:** Port `3008` (Cas12/Cas13 sequence alignment APIs)
+- **LangGraph Agent:** Port `8000` (FastAPI query routing engine)
+
+---
+
+## 🚀 Local Development Quickstart
+
+### 1. Prerequisites
+- **Node.js** (>= 18.0.0)
+- **pnpm** (>= 8.0.0)
+- **Python** (>= 3.10)
+- **PostgreSQL 18** (binaries installed on PATH to run `pg_ctl` and `initdb`)
+
+### 2. Database Initialization
+A user-space PostgreSQL instance runs on port `5433` to prevent privilege prompt popups or port conflicts with native installations:
+```bash
+# Initialize the user-space database cluster
+initdb -D database/local_pg_data -U postgres --auth=trust
+
+# Start the database engine
+pg_ctl -D database/local_pg_data -o "-p 5433" -l database/local_pg_data/server.log start
+
+# Create the target schema database
+psql -U postgres -p 5433 -h localhost -d postgres -c "CREATE DATABASE ecofarm;"
+```
+
+### 3. Setup Dependencies & Environments
+Initialize workspace packages and install requirements:
+```bash
+# Install NPM packages
+pnpm install
+
+# Build dependencies and verify Prisma client compilation
+pnpm run build
+
+# Push database models and generate Prisma client
+pnpm --filter @eco-farm/db exec prisma db push --accept-data-loss
+
+# Install python packages
+pip install -r apps/agents/requirements.txt
+```
+
+### 4. Running the Stack
+Launch all processes in watch/dev modes:
+```bash
+# Start backend API (Port 3000)
+pnpm --filter @eco-farm/api run dev
+
+# Start WebMCP server (Port 3001)
+pnpm --filter @eco-farm/mcp-server run dev
+
+# Start Next.js PWA Dashboard (Port 3007)
+pnpm --filter farmquest-web-dashboard run dev
+
+# Start CRISPR Bioinformatics (Port 3008)
+python services/bioinformatics-service/src/main.py
+
+# Start LangGraph Agent (Port 8000)
+python -m uvicorn apps.agents.src.main:app --host 0.0.0.0 --port 8000
+```
+
+---
+
+## 🔒 Security & Attestations
+
+1. **Zero-Trust Passkeys:** WebAuthn endpoints verify hardware biometric keys and persist metadata in the PostgreSQL store.
+2. **TEE Enclave Proofs:** Gateway maps hardware attestation claims (Intel TDX / AWS Nitro) with development fallbacks.
+3. **Solana Blockchain Minting:** Carbon credit tokens are signed and simulated locally when RPC endpoints are offline.

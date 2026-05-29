@@ -1,0 +1,10 @@
+{
+  "mcp_servers": [
+    {
+      "name": "Eco Farm Core Server",
+      "url": "https://api.ecofarm.com/mcp",
+      "auth_type": "oauth2",
+      "version": "2025-03-26"
+    }
+  ]
+}

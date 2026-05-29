@@ -1,0 +1,27 @@
+{
+  "name": "eco-farm-monorepo",
+  "version": "3.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.4.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  },
+  "pnpm": {
+    "allowedBuildScripts": [
+      "bigint-buffer",
+      "bufferutil",
+      "utf-8-validate",
+      "node-gyp-build",
+      "@solana/web3.js"
+    ]
+  }
+}

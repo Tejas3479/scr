@@ -65,3 +65,6 @@ temp/
 
 .vercel
 ".next/"  
+database/local_pg_data/
+.turbo/
+

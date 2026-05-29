@@ -1,0 +1,21 @@
+{
+  "/auth/register/page": "app/auth/register/page.js",
+  "/auth/login/page": "app/auth/login/page.js",
+  "/chat/page": "app/chat/page.js",
+  "/compliance/page": "app/compliance/page.js",
+  "/dashboard/crispr/page": "app/dashboard/crispr/page.js",
+  "/_not-found": "app/_not-found.js",
+  "/dashboard/knowledge/page": "app/dashboard/knowledge/page.js",
+  "/dashboard/ledger/page": "app/dashboard/ledger/page.js",
+  "/dashboard/twin/page": "app/dashboard/twin/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/forensics/page": "app/forensics/page.js",
+  "/help/page": "app/help/page.js",
+  "/landing/page": "app/landing/page.js",
+  "/learning/page": "app/learning/page.js",
+  "/missions/page": "app/missions/page.js",
+  "/notifications/page": "app/notifications/page.js",
+  "/page": "app/page.js",
+  "/schemes/page": "app/schemes/page.js",
+  "/settings/page": "app/settings/page.js"
+}

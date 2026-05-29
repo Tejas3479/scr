@@ -1,8 +1,0 @@
-{
-  "/landing/page": "app/landing/page.js",
-  "/missions/page": "app/missions/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/schemes/page": "app/schemes/page.js",
-  "/auth/login/page": "app/auth/login/page.js",
-  "/help/page": "app/help/page.js"
-}

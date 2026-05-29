@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String              @id @default(cuid())
+  email                 String              @unique
+  name                  String
+  passkeyCredentialId   Bytes?
+  passkeyPublicKey      Bytes?
+  dilithiumPublicKey    String?
+  trustScore            Float               @default(0.5)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  farms                 Farm[]
+  bciStates             BCICognitiveState[]
+  auditActions          AuditAction[]
+}
+
+model Farm {
+  id            String         @id @default(cuid())
+  name          String
+  boundary      Json?          // PostGIS GeoJSON Polygon mapping
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  createdAt     DateTime       @default(now())
+  diseaseEvents DiseaseEvent[]
+  carbonCredits CarbonCredit[]
+}
+
+model SensorDevice {
+  id          String   @id @default(cuid())
+  devEUI      String   @unique
+  type        String   // soil_moisture, weather, leaf_electrophysiology
+  farmId      String
+  lastReading Json?
+}
+
+model SensorReading {
+  time     DateTime @db.Timestamptz(6)
+  deviceId String
+  metric   String
+  value    Float
+
+  @@id([time, deviceId, metric]) // Composite primary key for TimescaleDB Hypertables
+  @@index([deviceId, time(sort: Desc)])
+}
+
+model BCICognitiveState {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  attentionScore Float
+  stressLevel    Float
+  cognitiveLoad  Float
+  timestamp      DateTime @default(now())
+}
+
+model DiseaseEvent {
+  id               String    @id @default(cuid())
+  farmId           String
+  farm             Farm      @relation(fields: [farmId], references: [id])
+  plotGeometry     Json      // GeoJSON Point/Polygon
+  crisprResult     String    // Pathogen name or "negative"
+  imageUrl         String?
+  ragDiagnosis     String?
+  confirmedAt      DateTime  @default(now())
+  resolvedAt       DateTime?
+  blockchainTxHash String?
+}
+
+model CarbonCredit {
+  id                String   @id @default(cuid())
+  farmId            String
+  farm              Farm     @relation(fields: [farmId], references: [id])
+  amountTonnes      Float
+  verificationProof String   // IPFS hash + Dilithium signature
+  mintedTxHash      String
+  mintedAt          DateTime @default(now())
+}
+
+model AuditAction {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String
+  teeProof  String?  // Signed Intel TDX claim documentation
+  timestamp DateTime @default(now())
+}
+
+model PestEmbedding {
+  id        String @id @default(cuid())
+  pestName  String
+  content   String
+  embedding String?
+}

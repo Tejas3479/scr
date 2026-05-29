@@ -1,0 +1,13 @@
+[package]
+name = "eco-farm"
+version = "3.0.0"
+description = "Eco Farm Carbon Token and practice ledger Anchor program"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "eco_farm"
+
+[dependencies]
+anchor-lang = "0.29.0"
+anchor-spl = "0.29.0"

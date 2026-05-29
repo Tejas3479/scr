@@ -1,117 +1,85 @@
-# 🚀 QUICK START - Get Services Running
+# 🚀 QUICK START — Eco Farm v3.0 Local Services
 
-## Your Issue
-The debug page shows services aren't running (404 errors, "Failed to fetch"). Let's fix this!
+This quick start guide explains how to spin up the local PostgreSQL database, start all microservices, and run diagnostic validation.
 
-## Solution: Start Services
+---
 
-### Option 1: Use PowerShell Script (Easiest)
+## 🛠️ Step 1: Start User-Space Database (Port 5433)
 
-1. Open PowerShell in the project folder
-2. Run:
-   ```powershell
-   .\scripts\start-services.ps1
-   ```
-
-### Option 2: Manual Docker Commands
-
-Open PowerShell and run:
+To avoid Windows Administrator permission checks and port clashes, we run PostgreSQL 18 on port **5433** with trust authentication:
 
 ```powershell
-# Navigate to project
-cd "C:\Users\tejas\OneDrive\Desktop\Eco Farm"
+# 1. Initialize the PostgreSQL cluster files
+initdb -D database/local_pg_data -U postgres --auth=trust
 
-# Start all services
-docker-compose up -d
+# 2. Launch the database engine
+pg_ctl -D database/local_pg_data -o "-p 5433" -l database/local_pg_data/server.log start
 
-# Wait 15 seconds
-Start-Sleep -Seconds 15
-
-# Check if running
-docker-compose ps
+# 3. Create the ecofarm target database
+psql -U postgres -p 5433 -h localhost -d postgres -c "CREATE DATABASE ecofarm;"
 ```
 
-You should see all services with status "Up".
+---
 
-### Option 3: Start One by One
+## 🏗️ Step 2: Build & Seed Database Models
+
+Deploy the Prisma schema and compile the monorepo packages:
 
 ```powershell
-# Start databases first
-docker-compose up -d postgres mongodb redis
+# Install Node modules
+pnpm install
 
-# Wait 10 seconds
-Start-Sleep -Seconds 10
+# Build all TypeScript modules
+pnpm run build
 
-# Start services
-docker-compose up -d user-service api-gateway gamification-service ai-service
-
-# Check status
-docker-compose ps
+# Push database schema tables
+pnpm --filter @eco-farm/db exec prisma db push --accept-data-loss
 ```
 
-## Verify Services Are Running
+---
 
-After starting, check:
+## ⚡ Step 3: Run Dev Servers
+
+Run each of these commands in separate terminal shells to activate all microservices:
+
+### Terminal 1 — NestJS API Gateway (Port 3000)
+```powershell
+pnpm --filter @eco-farm/api run dev
+```
+
+### Terminal 2 — WebMCP Server (Port 3001)
+```powershell
+pnpm --filter @eco-farm/mcp-server run dev
+```
+
+### Terminal 3 — Next.js PWA Dashboard (Port 3007)
+```powershell
+pnpm --filter farmquest-web-dashboard run dev
+```
+
+### Terminal 4 — CRISPR Bioinformatics Service (Port 3008)
+```powershell
+python services/bioinformatics-service/src/main.py
+```
+
+### Terminal 5 — LangGraph AI Agent Engine (Port 8000)
+```powershell
+python -m uvicorn apps.agents.src.main:app --host 0.0.0.0 --port 8000
+```
+
+---
+
+## 🚦 Step 4: Run Diagnostic Verifications
+
+Validate API health and endpoint wiring:
 
 ```powershell
-# Check API Gateway
-Invoke-WebRequest http://localhost:3000/health
+# 1. Verify NestJS Gateway (Returns health/status)
+Invoke-RestMethod -Uri http://localhost:3000/auth/attest -Method Post
 
-# Check User Service
-Invoke-WebRequest http://localhost:3001/health
+# 2. Verify Solana Credit Mint Wrapper (Returns transaction signature)
+Invoke-RestMethod -Uri http://localhost:3000/blockchain/mint -Method Post -Body (@{ farmerWalletAddressHex='AgriFarmerX992b8dff2384a88fbc923e'; amountTonnes=10 } | ConvertTo-Json) -ContentType "application/json"
+
+# 3. Verify LangGraph Agent Engine Routing (Returns routed graph state)
+Invoke-RestMethod -Uri http://localhost:8000/agent/query -Method Post -Body (@{ query='Hello, detect pests'; thread_id='test-1' } | ConvertTo-Json) -ContentType "application/json"
 ```
-
-## View Logs
-
-If services don't start, check logs:
-
-```powershell
-# All logs
-docker-compose logs
-
-# Specific service
-docker-compose logs user-service
-docker-compose logs api-gateway
-```
-
-## Common Issues
-
-### Port Already in Use
-```powershell
-# Find what's using port 3000
-netstat -ano | findstr :3000
-
-# Kill the process (replace PID)
-taskkill /PID <PID> /F
-```
-
-### Docker Not Running
-- Open Docker Desktop
-- Wait for it to fully start
-- Try again
-
-### Services Won't Build
-```powershell
-# Rebuild without cache
-docker-compose build --no-cache
-docker-compose up -d
-```
-
-## After Services Start
-
-1. Wait 15-20 seconds for services to fully initialize
-2. Visit: http://localhost:3001/debug
-3. Click "Run Diagnostic Tests" - all should be ✅
-4. Go to: http://localhost:3001/login
-5. Click "Create Test Account First" button
-6. Login should work!
-
-## Test Credentials
-
-Once services are running:
-- Phone: `+919876543210`
-- Password: `test123`
-
-
-
-

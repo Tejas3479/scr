@@ -1,110 +1,47 @@
-# Deployment Guide
+# Deployment Guide — Eco Farm v3.0
 
-## Prerequisites
+This guide details the deployment options for **Eco Farm v3.0 (Solarpunk Cognitive Agriculture OS)**.
 
-- Docker and Docker Compose installed
-- Kubernetes cluster (for production)
-- kubectl configured
-- Access to container registry
+---
 
-## Local Development Setup
+## 1. Local Monorepo Deployment (Development)
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd eco-farm-platform
-```
+For local development setup and native execution details, refer to the root documentation:
+- 📖 [README.md](../README.md) — Structural mappings, ports, and environment setup.
+- 🚀 [QUICK_START.md](../QUICK_START.md) — Step-by-step commands.
 
-2. Copy environment files:
-```bash
-cp services/api-gateway/.env.example services/api-gateway/.env
-# Repeat for other services
-```
+### Key local parameters:
+- **Port 5433:** User-space PostgreSQL database instance.
+- **Port 3000:** NestJS Zero-Trust API gateway.
+- **Port 3001:** WebMCP Server.
+- **Port 3007:** Next.js PWA Client.
+- **Port 3008:** FastAPI CRISPR Bioinformatics.
+- **Port 8000:** FastAPI LangGraph Agent.
 
-3. Start services with Docker Compose:
-```bash
-docker-compose up -d
-```
+---
 
-4. Verify services:
-```bash
-docker-compose ps
-curl http://localhost:3000/health
-```
+## 2. Containerized Deployment (Production)
 
-## Production Deployment
+### AWS / EKS Deployment Architecture
+For high-availability hosting, services are packaged into Docker containers and managed via Kubernetes.
 
-### Using Kubernetes
+### Docker Image Creation
+Dockerfiles are located inside each package directory:
+- `apps/api/Dockerfile`
+- `apps/mcp-server/Dockerfile`
+- `apps/agents/Dockerfile`
+- `services/bioinformatics-service/Dockerfile`
 
-1. Create namespace:
-```bash
-kubectl apply -f infrastructure/kubernetes/namespace.yaml
-```
-
-2. Create secrets:
-```bash
-kubectl create secret generic ecofarm-secrets \
-  --from-literal=jwt-secret=<your-secret> \
-  --from-literal=db-user=postgres \
-  --from-literal=db-password=<your-password> \
-  -n ecofarm
-```
-
-3. Deploy infrastructure:
-```bash
-kubectl apply -f infrastructure/kubernetes/postgres-deployment.yaml
-kubectl apply -f infrastructure/kubernetes/mongodb-deployment.yaml
-kubectl apply -f infrastructure/kubernetes/redis-deployment.yaml
-```
-
-4. Deploy services:
-```bash
-kubectl apply -f infrastructure/kubernetes/user-service-deployment.yaml
-kubectl apply -f infrastructure/kubernetes/api-gateway-deployment.yaml
-```
-
-5. Check deployment status:
-```bash
-kubectl get pods -n ecofarm
-kubectl get services -n ecofarm
-```
-
-### Using Terraform (AWS)
-
-1. Initialize Terraform:
-```bash
-cd infrastructure/terraform
-terraform init
-```
-
-2. Plan deployment:
-```bash
-terraform plan
-```
-
-3. Apply configuration:
-```bash
-terraform apply
-```
-
-## Monitoring
-
-- Application logs: `kubectl logs -f deployment/<service-name> -n ecofarm`
-- Metrics: Access Grafana dashboard (if configured)
-- Health checks: `curl http://<service-url>/health`
-
-## Scaling
-
-Scale services horizontally:
-```bash
-kubectl scale deployment api-gateway --replicas=5 -n ecofarm
-```
-
-## Rollback
-
-Rollback to previous version:
-```bash
-kubectl rollout undo deployment/<service-name> -n ecofarm
-```
-
-
+### Kubernetes Deployment Step-by-Step
+1. **Apply Namespace:**
+   ```bash
+   kubectl apply -f infrastructure/kubernetes/namespace.yaml
+   ```
+2. **Apply Database Enclaves (PostgreSQL/Redis):**
+   ```bash
+   kubectl apply -f infrastructure/kubernetes/postgres-deployment.yaml -n ecofarm
+   ```
+3. **Deploy Microservices:**
+   ```bash
+   kubectl apply -f infrastructure/kubernetes/api-gateway-deployment.yaml -n ecofarm
+   ```
