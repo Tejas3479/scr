@@ -125,20 +125,13 @@ jobs:
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
       
-      - name: Configure kubectl
-        run: |
-          mkdir -p ~/.kube
-          if echo "${{ secrets.KUBECONFIG }}" | grep -q "apiVersion"; then
-            echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
-            echo "${{ secrets.KUBECONFIG }}" > ${{ github.workspace }}/kubeconfig
-          else
-            echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
-            echo "${{ secrets.KUBECONFIG }}" | base64 -d > ${{ github.workspace }}/kubeconfig
-          fi
-          chmod 600 ~/.kube/config
-          echo "KUBECONFIG=${{ github.workspace }}/kubeconfig" >> $GITHUB_ENV
+      - name: Set up Kubeconfig
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
       
       - name: Deploy to Kubernetes
         run: |
-          kubectl --kubeconfig=${{ github.workspace }}/kubeconfig set image deployment/api-gateway api-gateway=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/api-gateway:${{ github.sha }} -n ecofarm
-          kubectl --kubeconfig=${{ github.workspace }}/kubeconfig rollout status deployment/api-gateway -n ecofarm
+          kubectl set image deployment/api-gateway api-gateway=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/api-gateway:${{ github.sha }} -n ecofarm
+          kubectl rollout status deployment/api-gateway -n ecofarm
