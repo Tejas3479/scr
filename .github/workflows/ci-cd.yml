@@ -125,6 +125,36 @@ jobs:
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
       
+      - name: Validate Kubeconfig Secret and Server URL
+        env:
+          KUBECONFIG_SECRET: ${{ secrets.KUBECONFIG }}
+        run: |
+          if [ -z "$KUBECONFIG_SECRET" ]; then
+            echo "::error::GitHub Secret 'KUBECONFIG' is EMPTY or NOT CONFIGURED! Please add KUBECONFIG in Repository Settings -> Secrets."
+            exit 1
+          fi
+          
+          if echo "$KUBECONFIG_SECRET" | grep -q "apiVersion"; then
+            CONFIG_TEXT="$KUBECONFIG_SECRET"
+          else
+            CONFIG_TEXT=$(echo "$KUBECONFIG_SECRET" | base64 -d 2>/dev/null || echo "")
+          fi
+          
+          if [ -z "$CONFIG_TEXT" ]; then
+            echo "::error::KUBECONFIG secret content could not be decoded or parsed!"
+            exit 1
+          fi
+          
+          SERVER_URL=$(echo "$CONFIG_TEXT" | grep "server:" | awk '{print $2}' | head -n 1)
+          echo "Configured Kubernetes Server API: $SERVER_URL"
+          
+          if echo "$SERVER_URL" | grep -qE "localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0"; then
+            echo "::error::Your KUBECONFIG secret points to a LOCAL cluster address ($SERVER_URL)!"
+            echo "::error::Because GitHub Actions runs on a remote runner, it cannot connect to 'localhost' or '127.0.0.1' of your local computer."
+            echo "::error::Please configure a remote Kubernetes cluster with a public API endpoint or use a tunnel, and update the GITHUB secret 'KUBECONFIG'."
+            exit 1
+          fi
+      
       - name: Set up Kubeconfig
         uses: azure/k8s-set-context@v3
         with:
